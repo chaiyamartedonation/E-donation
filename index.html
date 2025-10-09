@@ -110,6 +110,7 @@
              <header class="text-center mb-8">
                 <h1 class="header-title text-4xl font-bold">ระบบจัดการบุญ | หน่วยรับบริจาควัดไชยามาตย์</h1>
                 <p class="header-subtitle mt-2">บริหารจัดการข้อมูลการบริจาคและออกใบลดหย่อนภาษี</p>
+                
             </header>
             <main>
                 <!-- Section 1: Online Donation -->
@@ -160,7 +161,7 @@
                             <!-- QR Code Section -->
                             <div class="flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300">
                                 <h3 class="text-xl font-semibold mb-4 text-gray-700">สแกน QR Code เพื่อบริจาค</h3>
-                                <img src="https://img2.pic.in.th/pic/099400240646898.png" alt="QR Code for Donation" class="w-76 h-76 object-contain rounded-md shadow-lg">
+                                <img src="https://img2.pic.in.th/pic/099400240646898.png" alt="QR Code for Donation" class="w-64 h-64 object-contain rounded-md shadow-lg">
                                 <p class="mt-4 text-center text-gray-700">ใช้แอปพลิเคชันธนาคารบนมือถือของคุณ<br>เพื่อสแกนและทำการบริจาค</p>
                             </div>
                         </div>
@@ -389,7 +390,13 @@
                         <div class="mt-8">
                             <div id="dashboard-recorded" class="dashboard-sub-content active">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลที่เจ้าหน้าที่บันทึก</h3>
+                                    <div class="flex items-center space-x-4">
+                                        <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลที่เจ้าหน้าที่บันทึก</h3>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="text" id="start-date-recorded" class="date-filter border rounded px-2 py-1" placeholder="วันที่เริ่มต้น">
+                                            <input type="text" id="end-date-recorded" class="date-filter border rounded px-2 py-1" placeholder="วันที่สิ้นสุด">
+                                        </div>
+                                    </div>
                                     <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-recorded-body" data-title="รายงานข้อมูลที่เจ้าหน้าที่บันทึก">
                                         <i class="fas fa-print"></i>
                                         <span>พิมพ์รายงาน</span>
@@ -415,7 +422,13 @@
                             </div>
                             <div id="dashboard-online" class="dashboard-sub-content">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลบริจาคออนไลน์</h3>
+                                     <div class="flex items-center space-x-4">
+                                        <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลบริจาคออนไลน์</h3>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="text" id="start-date-online" class="date-filter border rounded px-2 py-1" placeholder="วันที่เริ่มต้น">
+                                            <input type="text" id="end-date-online" class="date-filter border rounded px-2 py-1" placeholder="วันที่สิ้นสุด">
+                                        </div>
+                                    </div>
                                     <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-online-body" data-title="รายงานข้อมูลบริจาคออนไลน์">
                                         <i class="fas fa-print"></i>
                                         <span>พิมพ์รายงาน</span>
@@ -441,7 +454,13 @@
                             </div>
                             <div id="dashboard-requests" class="dashboard-sub-content">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลคำขอใบลดหย่อนภาษี</h3>
+                                     <div class="flex items-center space-x-4">
+                                        <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลคำขอใบลดหย่อนภาษี</h3>
+                                         <div class="flex items-center space-x-2">
+                                            <input type="text" id="start-date-requests" class="date-filter border rounded px-2 py-1" placeholder="วันที่เริ่มต้น">
+                                            <input type="text" id="end-date-requests" class="date-filter border rounded px-2 py-1" placeholder="วันที่สิ้นสุด">
+                                        </div>
+                                    </div>
                                     <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-requests-body" data-title="รายงานข้อมูลคำขอใบลดหย่อนภาษี">
                                         <i class="fas fa-print"></i>
                                         <span>พิมพ์รายงาน</span>
@@ -502,39 +521,78 @@
 
     <!-- Edit Modal -->
     <div id="edit-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-10 mx-auto p-5 border w-full max-w-lg shadow-lg rounded-md bg-white">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
             <form id="edit-form">
                 <input type="hidden" id="edit-doc-id">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4 border-b pb-2">แก้ไขข้อมูลการบริจาค</h3>
-                <div class="space-y-4 text-left">
-                    <div>
-                        <label for="edit-orgName" class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล / ชื่อองค์กร</label>
-                        <input id="edit-orgName" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label for="edit-amount" class="block text-sm font-medium text-gray-700">จำนวนเงิน (บาท)</label>
-                        <input id="edit-amount" type="number" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label for="edit-donationType" class="block text-sm font-medium text-gray-700">ประเภทการบริจาค</label>
-                        <input id="edit-donationType" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label for="edit-purpose" class="block text-sm font-medium text-gray-700">วัตถุประสงค์</label>
-                        <select id="edit-purpose" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
-                            <option value="เพื่อสมทบกฐินสามัคคี ประจำปี 2568">เพื่อสมทบกฐินสามัคคี ประจำปี 2568</option>
-                            <option value="เพื่อดำเนินการทั่วไป">เพื่อดำเนินการทั่วไป</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="edit-receiptStatus" class="block text-sm font-medium text-gray-700">สถานะใบลดหย่อน</label>
-                        <select id="edit-receiptStatus" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
-                            <option value="รอดำเนินการ">รอดำเนินการ</option>
-                            <option value="เสร็จสิ้น">เสร็จสิ้น</option>
-                            <option value="ไม่ต้องการ">ไม่ต้องการ</option>
-                        </select>
-                    </div>
+                
+                <div class="space-y-6 max-h-[70vh] overflow-y-auto p-4">
+                    <!-- Part 1: Donor Info -->
+                    <fieldset class="border p-4 rounded-md">
+                        <legend class="text-md font-semibold px-2 text-gray-700">ส่วนที่ 1: ข้อมูลผู้บริจาค</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                            <div>
+                                <label for="edit-donorType" class="block text-sm font-medium text-gray-700">ประเภทผู้บริจาค</label>
+                                <select id="edit-donorType" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                                    <option>บุคคลธรรมดา</option>
+                                    <option>นิติบุคคล/องค์กร</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="edit-idNumber" class="block text-sm font-medium text-gray-700">เลขประจำตัว (13 หลัก)</label>
+                                <input id="edit-idNumber" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="edit-orgName" class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล / ชื่อองค์กร</label>
+                                <input id="edit-orgName" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label for="edit-phone" class="block text-sm font-medium text-gray-700">เบอร์โทรศัพท์</label>
+                                <input id="edit-phone" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="edit-notes" class="block text-sm font-medium text-gray-700">หมายเหตุ</label>
+                                <textarea id="edit-notes" rows="2" class="mt-1 w-full p-2 border border-gray-300 rounded-md"></textarea>
+                            </div>
+                        </div>
+                    </fieldset>
+    
+                    <!-- Part 2: Donation Details -->
+                    <fieldset class="border p-4 rounded-md">
+                        <legend class="text-md font-semibold px-2 text-gray-700">ส่วนที่ 2: รายละเอียดการบริจาค</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                            <div>
+                                <label for="edit-amount" class="block text-sm font-medium text-gray-700">จำนวนเงิน (บาท)</label>
+                                <input id="edit-amount" type="number" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label for="edit-donationType" class="block text-sm font-medium text-gray-700">ประเภทการบริจาค</label>
+                                <input id="edit-donationType" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="edit-purpose" class="block text-sm font-medium text-gray-700">วัตถุประสงค์</label>
+                                <select id="edit-purpose" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                                    <option value="เพื่อสมทบกฐินสามัคคี ประจำปี 2568">เพื่อสมทบกฐินสามัคคี ประจำปี 2568</option>
+                                    <option value="เพื่อดำเนินการทั่วไป">เพื่อดำเนินการทั่วไป</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+    
+                    <!-- Part 3: Documentation -->
+                    <fieldset class="border p-4 rounded-md">
+                        <legend class="text-md font-semibold px-2 text-gray-700">ส่วนที่ 3: เอกสารหลักฐาน</legend>
+                        <div class="mt-2">
+                            <label for="edit-receiptStatus" class="block text-sm font-medium text-gray-700">สถานะใบลดหย่อน</label>
+                            <select id="edit-receiptStatus" class="mt-1 w-full p-2 border border-gray-300 rounded-md">
+                                <option value="รอดำเนินการ">รอดำเนินการ</option>
+                                <option value="เสร็จสิ้น">เสร็จสิ้น</option>
+                                <option value="ไม่ต้องการ">ไม่ต้องการ</option>
+                            </select>
+                        </div>
+                    </fieldset>
                 </div>
+    
                 <div class="items-center px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse mt-4">
                     <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm">
                         บันทึก
@@ -552,7 +610,7 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, serverTimestamp, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, serverTimestamp, updateDoc, query, orderBy, where, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         // Your web app's Firebase configuration
@@ -571,6 +629,67 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // --- Thai Baht Text Function ---
+        function ThaiBaht(number) {
+            let bahttext = "";
+            if (isNaN(number) || number === null) {
+                return "";
+            }
+            
+            number = parseFloat(number);
+            if (number === 0) {
+                return "ศูนย์บาทถ้วน";
+            }
+
+            let num = Math.floor(number);
+            let satang = Math.round((number - num) * 100);
+
+            let t = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
+            let n = ["", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
+
+            let s = num.toString();
+            let s_len = s.length;
+
+            let s_rev = s.split('').reverse().join('');
+            for (let i = 0; i < s_len; i++) {
+                let digit = s_rev[i];
+                if (digit !== '0') {
+                    let unit = t[i];
+                    let digitText = n[parseInt(digit)];
+
+                    if (i % 6 === 1 && digit === '2') { 
+                        digitText = "ยี่";
+                    } else if (i % 6 === 1 && digit === '1') { 
+                        digitText = "";
+                    } else if (i === 0 && digit === '1' && s.length > 1) { 
+                        digitText = "เอ็ด";
+                    } else if (i % 6 === 0 && i >= 6) {
+                        unit = "ล้าน";
+                    }
+                    bahttext = digitText + unit + bahttext;
+                }
+            }
+            
+            bahttext += "บาท";
+
+            if (satang > 0) {
+                let satangStr = satang.toString().padStart(2, '0');
+                let s1 = satangStr[0];
+                let s2 = satangStr[1];
+
+                if (s1 !== '0') {
+                    bahttext += (s1 === '2' ? 'ยี่' : (s1 === '1' ? '' : n[parseInt(s1)])) + 'สิบ';
+                }
+                if (s2 !== '0') {
+                    bahttext += (s2 === '1' && s1 !== '0' ? 'เอ็ด' : n[parseInt(s2)]);
+                }
+                bahttext += 'สตางค์';
+            } else {
+                bahttext += "ถ้วน";
+            }
+            return bahttext;
+        }
+
         // --- DOM Elements ---
         const tabs = document.querySelectorAll('.nav-link');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -582,7 +701,7 @@
         const loginError = document.getElementById('login-error');
         const staffMenu = document.getElementById('staff-menu');
         const clockElement = document.getElementById('clock');
-        const dashboardTableRecordedBody = document.getElementById('dashboard-table-recorded-body');
+        
         const editModal = document.getElementById('edit-modal');
         const editForm = document.getElementById('edit-form');
         const editModalCloseBtn = document.getElementById('edit-modal-close');
@@ -763,9 +882,10 @@
             }
         });
 
-        // --- Dashboard Data Loading ---
+        // --- Dashboard Data Loading & Filtering ---
         let unsubscribeRecorded = null, unsubscribeOnline = null, unsubscribeRequests = null;
         let allDocsData = {}; // Cache for editing
+        let allRecordedData = [], allOnlineData = [], allRequestData = [];
 
         function unsubscribeAllListeners() {
             if (unsubscribeRecorded) unsubscribeRecorded();
@@ -775,102 +895,143 @@
 
         function loadDashboardData() {
             unsubscribeAllListeners();
+            const datePickerOnChange = () => {
+                renderRecordedTable();
+                renderOnlineTable();
+                renderRequestsTable();
+            };
 
-            function formatFirebaseTimestamp(timestamp) {
-                return timestamp ? new Date(timestamp.seconds * 1000).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
-            }
+            const fpConfig = { dateFormat: "Y-m-d", onChange: datePickerOnChange };
+            flatpickr("#start-date-recorded", fpConfig);
+            flatpickr("#end-date-recorded", fpConfig);
+            flatpickr("#start-date-online", fpConfig);
+            flatpickr("#end-date-online", fpConfig);
+            flatpickr("#start-date-requests", fpConfig);
+            flatpickr("#end-date-requests", fpConfig);
 
-            const recordedDonationsRef = query(collection(db, "recorded_donations"), orderBy("createdAt", "desc"));
-            unsubscribeRecorded = onSnapshot(recordedDonationsRef, (snapshot) => {
-                dashboardTableRecordedBody.innerHTML = '';
-                let totalAmount = 0, pendingReceipts = 0;
-                allDocsData = {}; // Reset cache
+            const recordedRef = query(collection(db, "recorded_donations"), orderBy("createdAt", "desc"));
+            unsubscribeRecorded = onSnapshot(recordedRef, (snapshot) => {
+                allRecordedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                allDocsData = allRecordedData.reduce((acc, doc) => ({...acc, [doc.id]: doc }), {});
+                renderRecordedTable();
+            }, console.error);
 
-                if (snapshot.empty) {
-                     dashboardTableRecordedBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ยังไม่มีข้อมูลที่บันทึกโดยเจ้าหน้าที่</td></tr>';
-                } else {
-                    snapshot.docs.forEach(docSnap => {
-                        const data = docSnap.data();
-                        allDocsData[docSnap.id] = data; // Cache data
-                        totalAmount += data.amount || 0;
-                        if(data.receiptStatus === 'รอดำเนินการ') pendingReceipts++;
-                        dashboardTableRecordedBody.innerHTML += `
-                            <tr class="hover-row" data-id="${docSnap.id}">
-                                <td class="py-3 px-4" data-field="orgName">${data.orgName}</td>
-                                <td class="py-3 px-4 text-right" data-field="amount">${(data.amount || 0).toLocaleString('th-TH')}</td>
-                                <td class="py-3 px-4" data-field="donationType">${data.donationType}</td>
-                                <td class="py-3 px-4" data-field="purpose">${data.purpose}</td>
-                                <td class="py-3 px-4" data-field="receiptStatus">${renderStatusBadge(data.receiptStatus)}</td>
-                                <td class="py-3 px-4 text-center space-x-4" data-field="actions">
-                                    <button class="text-indigo-600 hover:text-indigo-800 edit-btn" title="แก้ไข"><i class="fas fa-edit"></i></button>
-                                    <button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="recorded_donations"><i class="fas fa-trash-alt"></i></button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-                document.getElementById('total-donation-amount').textContent = `฿ ${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                document.getElementById('total-donors').textContent = `${snapshot.size} คน`;
-                document.getElementById('pending-receipts').textContent = `${pendingReceipts} รายการ`;
-            }, (error) => {
-                console.error("Error listening to recorded_donations:", error);
-                dashboardTableRecordedBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล: โปรดตรวจสอบ Security Rules</td></tr>';
-            });
+            const onlineRef = query(collection(db, "donations"), orderBy("createdAt", "desc"));
+            unsubscribeOnline = onSnapshot(onlineRef, (snapshot) => {
+                allOnlineData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderOnlineTable();
+            }, console.error);
 
-            const onlineDonationsRef = query(collection(db, "donations"), orderBy("createdAt", "desc"));
-            unsubscribeOnline = onSnapshot(onlineDonationsRef, (snapshot) => {
-                 const tableBody = document.getElementById('dashboard-table-online-body');
-                 tableBody.innerHTML = '';
-                 if (snapshot.empty) {
-                     tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ยังไม่มีข้อมูลจากระบบบริจาคออนไลน์</td></tr>';
-                 } else {
-                     snapshot.docs.forEach(docSnap => {
-                         const data = docSnap.data();
-                         tableBody.innerHTML += `
-                            <tr class="hover-row" data-id="${docSnap.id}">
-                                <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
-                                <td class="py-3 px-4">${data.name}</td>
-                                <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
-                                <td class="py-3 px-4">${data.type}</td>
-                                <td class="py-3 px-4">${data.notes || ''}</td>
-                                <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="donations"><i class="fas fa-trash-alt"></i></button></td>
-                            </tr>`;
-                     });
-                 }
-            }, (error) => {
-                console.error("Error listening to donations:", error);
-                document.getElementById('dashboard-table-online-body').innerHTML = '<tr><td colspan="6" class="text-center p-8 text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล: โปรดตรวจสอบ Security Rules</td></tr>';
-            });
+            const requestsRef = query(collection(db, "tax_receipt_requests"), orderBy("createdAt", "desc"));
+            unsubscribeRequests = onSnapshot(requestsRef, (snapshot) => {
+                allRequestData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderRequestsTable();
+            }, console.error);
+        }
 
-            const taxRequestsRef = query(collection(db, "tax_receipt_requests"), orderBy("createdAt", "desc"));
-            unsubscribeRequests = onSnapshot(taxRequestsRef, (snapshot) => {
-                document.getElementById('total-receipt-requests').textContent = `${snapshot.size} รายการ`;
-                const tableBody = document.getElementById('dashboard-table-requests-body');
-                tableBody.innerHTML = '';
-                if (snapshot.empty) {
-                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-8 text-gray-500">ยังไม่มีคำขอใบลดหย่อนภาษี</td></tr>';
-                } else {
-                    snapshot.docs.forEach(docSnap => {
-                        const data = docSnap.data();
-                        tableBody.innerHTML += `
-                             <tr class="hover-row" data-id="${docSnap.id}">
-                                <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
-                                <td class="py-3 px-4">${data.taxId}</td>
-                                <td class="py-3 px-4">${data.fullName}</td>
-                                <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
-                                <td class="py-3 px-4">${data.donationType}</td>
-                                <td class="py-3 px-4">${data.phone}</td>
-                                <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="tax_receipt_requests"><i class="fas fa-trash-alt"></i></button></td>
-                            </tr>`;
-                    });
-                }
-            }, (error) => {
-                console.error("Error listening to tax_receipt_requests:", error);
-                document.getElementById('dashboard-table-requests-body').innerHTML = '<tr><td colspan="7" class="text-center p-8 text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล: โปรดตรวจสอบ Security Rules</td></tr>';
+        function filterDataByDate(data, startDate, endDate) {
+            if (endDate) endDate.setHours(23, 59, 59, 999);
+            return data.filter(item => {
+                const itemDate = item.createdAt?.toDate();
+                if (!itemDate) return false;
+                const startMatch = startDate ? itemDate >= startDate : true;
+                const endMatch = endDate ? itemDate <= endDate : true;
+                return startMatch && endMatch;
             });
         }
+
+        function renderRecordedTable() {
+            const startDate = document.getElementById('start-date-recorded')._flatpickr.selectedDates[0];
+            const endDate = document.getElementById('end-date-recorded')._flatpickr.selectedDates[0];
+            const filteredData = filterDataByDate(allRecordedData, startDate, endDate);
+            const tableBody = document.getElementById('dashboard-table-recorded-body');
+            
+            tableBody.innerHTML = '';
+            let totalAmount = 0, pendingReceipts = 0;
+
+            if (filteredData.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
+            } else {
+                filteredData.forEach(data => {
+                    tableBody.innerHTML += `
+                        <tr class="hover-row" data-id="${data.id}">
+                            <td class="py-3 px-4">${data.orgName}</td>
+                            <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
+                            <td class="py-3 px-4">${data.donationType}</td>
+                            <td class="py-3 px-4">${data.purpose}</td>
+                            <td class="py-3 px-4">${renderStatusBadge(data.receiptStatus)}</td>
+                            <td class="py-3 px-4 text-center space-x-4">
+                                <button class="text-indigo-600 hover:text-indigo-800 edit-btn" title="แก้ไข"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="recorded_donations"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>`;
+                });
+            }
+             // Update global stats based on unfiltered data
+            allRecordedData.forEach(data => {
+                totalAmount += data.amount || 0;
+                if (data.receiptStatus === 'รอดำเนินการ') pendingReceipts++;
+            });
+            document.getElementById('total-donation-amount').textContent = `฿ ${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('total-donors').textContent = `${allRecordedData.length} คน`;
+            document.getElementById('pending-receipts').textContent = `${pendingReceipts} รายการ`;
+        }
+
+        function renderOnlineTable() {
+            const startDate = document.getElementById('start-date-online')._flatpickr.selectedDates[0];
+            const endDate = document.getElementById('end-date-online')._flatpickr.selectedDates[0];
+            const filteredData = filterDataByDate(allOnlineData, startDate, endDate);
+            const tableBody = document.getElementById('dashboard-table-online-body');
+            tableBody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
+            } else {
+                 filteredData.forEach(data => {
+                     tableBody.innerHTML += `
+                        <tr class="hover-row" data-id="${data.id}">
+                            <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
+                            <td class="py-3 px-4">${data.name}</td>
+                            <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
+                            <td class="py-3 px-4">${data.type}</td>
+                            <td class="py-3 px-4">${data.notes || ''}</td>
+                            <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="donations"><i class="fas fa-trash-alt"></i></button></td>
+                        </tr>`;
+                 });
+            }
+        }
+
+        function renderRequestsTable() {
+            const startDate = document.getElementById('start-date-requests')._flatpickr.selectedDates[0];
+            const endDate = document.getElementById('end-date-requests')._flatpickr.selectedDates[0];
+            const filteredData = filterDataByDate(allRequestData, startDate, endDate);
+            const tableBody = document.getElementById('dashboard-table-requests-body');
+            tableBody.innerHTML = '';
+            document.getElementById('total-receipt-requests').textContent = `${allRequestData.length} รายการ`;
+
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
+            } else {
+                filteredData.forEach(data => {
+                    tableBody.innerHTML += `
+                         <tr class="hover-row" data-id="${data.id}">
+                            <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
+                            <td class="py-3 px-4">${data.taxId}</td>
+                            <td class="py-3 px-4">${data.fullName}</td>
+                            <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
+                            <td class="py-3 px-4">${data.donationType}</td>
+                            <td class="py-3 px-4">${data.phone}</td>
+                            <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="tax_receipt_requests"><i class="fas fa-trash-alt"></i></button></td>
+                        </tr>`;
+                });
+            }
+        }
+
+        function formatFirebaseTimestamp(timestamp) {
+            return timestamp ? new Date(timestamp.seconds * 1000).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+        }
         
-        // --- Dashboard Edit/Delete Logic using Event Delegation ---
+        // --- Dashboard Edit/Delete Logic ---
         document.getElementById('dashboard').addEventListener('click', async (e) => {
             const target = e.target.closest('button');
             if (!target) return;
@@ -879,18 +1040,12 @@
             if (!row) return;
             const id = row.dataset.id;
 
-            // Handle Delete
             if (target.classList.contains('delete-btn')) {
                 const collectionName = target.dataset.collection;
                 Swal.fire({
-                    title: 'คุณแน่ใจหรือไม่?',
-                    text: `คุณต้องการลบรายการนี้ใช่หรือไม่?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#4f46e5',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'ใช่, ลบเลย!',
-                    cancelButtonText: 'ยกเลิก'
+                    title: 'คุณแน่ใจหรือไม่?', text: `คุณต้องการลบรายการนี้ใช่หรือไม่?`, icon: 'warning',
+                    showCancelButton: true, confirmButtonColor: '#4f46e5', cancelButtonColor: '#d33',
+                    confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         try {
@@ -904,11 +1059,14 @@
                 });
             }
             
-            // Handle Edit
             if (target.classList.contains('edit-btn')) {
                 const data = allDocsData[id];
                 document.getElementById('edit-doc-id').value = id;
+                document.getElementById('edit-donorType').value = data.donorType;
+                document.getElementById('edit-idNumber').value = data.idNumber;
                 document.getElementById('edit-orgName').value = data.orgName;
+                document.getElementById('edit-phone').value = data.phone;
+                document.getElementById('edit-notes').value = data.notes;
                 document.getElementById('edit-amount').value = data.amount;
                 document.getElementById('edit-donationType').value = data.donationType;
                 document.getElementById('edit-purpose').value = data.purpose;
@@ -926,7 +1084,11 @@
             e.preventDefault();
             const id = document.getElementById('edit-doc-id').value;
             const updatedData = {
+                donorType: document.getElementById('edit-donorType').value,
+                idNumber: document.getElementById('edit-idNumber').value,
                 orgName: document.getElementById('edit-orgName').value,
+                phone: document.getElementById('edit-phone').value,
+                notes: document.getElementById('edit-notes').value,
                 amount: Number(document.getElementById('edit-amount').value),
                 donationType: document.getElementById('edit-donationType').value,
                 purpose: document.getElementById('edit-purpose').value,
@@ -937,22 +1099,14 @@
                 await updateDoc(doc(db, "recorded_donations", id), updatedData);
                 editModal.classList.add('hidden');
                 Swal.fire({
-                    title: 'สำเร็จ!',
-                    text: 'อัปเดตข้อมูลเรียบร้อยแล้ว',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
+                    title: 'สำเร็จ!', text: 'อัปเดตข้อมูลเรียบร้อยแล้ว', icon: 'success',
+                    timer: 1500, showConfirmButton: false
                 });
             } catch (err) {
-                 Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล',
-                    icon: 'error'
-                });
+                 Swal.fire({ title: 'ผิดพลาด!', text: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล', icon: 'error' });
                 console.error(err);
             }
         });
-
 
         function renderStatusBadge(status) {
             if (status === 'เสร็จสิ้น') return `<span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">เสร็จสิ้น</span>`;
@@ -1002,6 +1156,84 @@
             });
         });
 
+        // --- Print Logic ---
+        document.querySelectorAll('.print-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const tableId = button.dataset.tableId;
+                const title = button.dataset.title;
+                const startDateEl = document.getElementById(`start-date-${tableId.split('-')[2]}`);
+                const endDateEl = document.getElementById(`end-date-${tableId.split('-')[2]}`);
+                const startDateVal = startDateEl ? startDateEl.value : null;
+                const endDateVal = endDateEl ? endDateEl.value : null;
+
+                let dataToPrint;
+                if (tableId.includes('recorded')) dataToPrint = allRecordedData;
+                else if (tableId.includes('online')) dataToPrint = allOnlineData;
+                else if (tableId.includes('requests')) dataToPrint = allRequestData;
+                
+                const filteredData = filterDataByDate(dataToPrint, startDateVal ? new Date(startDateVal) : null, endDateVal ? new Date(endDateVal) : null);
+
+                let tableHeadHTML = '';
+                let tableBodyHTML = '';
+                let totalAmount = 0;
+
+                // Generate table based on ID
+                if (tableId.includes('recorded')) {
+                    tableHeadHTML = `<tr><th>วันที่บันทึก</th><th>ชื่อ/องค์กร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
+                    filteredData.forEach(item => {
+                        totalAmount += item.amount || 0;
+                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.orgName}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
+                    });
+                    tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="4" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                } else if (tableId.includes('online')) {
+                    tableHeadHTML = `<tr><th>วันที่</th><th>ชื่อ-นามสกุล</th><th>จำนวนเงิน</th><th>ประเภท</th><th>หมายเหตุ</th></tr>`;
+                    filteredData.forEach(item => {
+                        totalAmount += item.amount || 0;
+                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.name}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.type}</td><td>${item.notes || ''}</td></tr>`;
+                    });
+                    tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                } else if (tableId.includes('requests')) {
+                    tableHeadHTML = `<tr><th>วันที่ยื่นขอ</th><th>เลขประจำตัวผู้เสียภาษี</th><th>ชื่อ-สกุล</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
+                     filteredData.forEach(item => {
+                        totalAmount += item.amount || 0;
+                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.taxId}</td><td>${item.fullName}</td><td>${item.phone}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
+                    });
+                     tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="4" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                }
+
+
+                const printWindow = window.open('', '', 'height=600,width=800');
+                printWindow.document.write('<html><head><title>พิมพ์รายงาน</title>');
+                printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+                 printWindow.document.write(`<style> body { font-family: 'Sarabun', sans-serif; } table { width: 100%; border-collapse: collapse; font-size: 12px; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left;} th { background-color: #f2f2f2; } </style>`);
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<div class="container mx-auto p-8">');
+                printWindow.document.write('<div class="text-center mb-8">');
+                printWindow.document.write('<img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="logo" class="h-24 w-24 mx-auto">');
+                printWindow.document.write(`<h1 class="text-2xl font-bold mt-4">${title}</h1>`);
+                printWindow.document.write(`<p>วัดไชยามาตย์</p>`);
+                 if(startDateVal || endDateVal) {
+                    printWindow.document.write(`<p>ช่วงวันที่: ${startDateVal || '...'} ถึง ${endDateVal || '...'}</p>`);
+                 }
+                printWindow.document.write(`<p>วันที่พิมพ์: ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric'})}</p>`);
+                printWindow.document.write('</div>');
+                printWindow.document.write('<table>');
+                printWindow.document.write(`<thead>${tableHeadHTML}</thead>`);
+                printWindow.document.write(`<tbody>${tableBodyHTML}</tbody>`);
+                printWindow.document.write('</table>');
+                printWindow.document.write('</div>');
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+            });
+        });
     </script>
 </body>
 </html>
+" and want to replace this selection with: "I have noticed you have removed the modal code.
+"
+
