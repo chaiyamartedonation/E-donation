@@ -57,7 +57,6 @@
             <div class="p-4 text-center border-b border-gray-700 flex flex-col items-center">
                 <img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="โลโก้วัดไชยามาตย์" class="h-24 w-24">
                 <h1 class="text-xl font-bold text-white mt-2">วัดไชยามาตย์</h1>
-                 <!-- Login/Logout Area -->
                 <div class="w-full p-4">
                     <button id="login-btn" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 flex items-center justify-center space-x-2">
                         <i class="fas fa-sign-in-alt"></i>
@@ -69,8 +68,7 @@
                     </button>
                 </div>
             </div>
-           
-            <nav class="mt-6">
+            <nav class="mt-2">
                 <!-- User/Donor Section -->
                 <div>
                     <h2 class="text-xs font-semibold text-gray-400 uppercase px-6 mb-2">สำหรับผู้บริจาค</h2>
@@ -100,18 +98,20 @@
                             <i class="fas fa-chart-pie w-5 text-center"></i>
                             <span>สรุปผล</span>
                         </button>
+                        <button class="nav-link w-full text-left py-3 px-6 flex items-center space-x-3" data-tab="announcer">
+                            <i class="fas fa-bullhorn w-5 text-center"></i>
+                            <span>ผู้ประกาศ</span>
+                        </button>
                     </div>
                 </div>
-
             </nav>
         </aside>
 
         <!-- Main Content -->
         <div class="flex-1 p-4 md:p-10 overflow-y-auto">
              <header class="text-center mb-8">
-                <h1 class="header-title text-4xl font-bold">ระบบจัดการบุญ | หน่วยรับบริจาควัดไชยามาตย์</h1>
+                <h1 class="header-title text-4xl font-bold">ระบบจัดการบุญ</h1>
                 <p class="header-subtitle mt-2">บริหารจัดการข้อมูลการบริจาคและออกใบลดหย่อนภาษี</p>
-                
             </header>
             <main>
                 <!-- Section 1: Online Donation -->
@@ -162,7 +162,7 @@
                             <!-- QR Code Section -->
                             <div class="flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300">
                                 <h3 class="text-xl font-semibold mb-4 text-gray-700">สแกน QR Code เพื่อบริจาค</h3>
-                                <img src="https://img2.pic.in.th/pic/099400240646898.png" alt="QR Code for Donation" class="w-65 h-65 object-contain rounded-md shadow-lg">
+                                <img src="https://img2.pic.in.th/pic/099400240646898.png" alt="QR Code for Donation" class="w-64 h-64 object-contain rounded-md shadow-lg">
                                 <p class="mt-4 text-center text-gray-700">ใช้แอปพลิเคชันธนาคารบนมือถือของคุณ<br>เพื่อสแกนและทำการบริจาค</p>
                             </div>
                         </div>
@@ -488,6 +488,44 @@
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                <!-- Section 5: Announcer -->
+                <div id="announcer" class="tab-content">
+                    <div class="card p-8 rounded-lg shadow-lg">
+                        <h2 class="card-title text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
+                            <i class="fas fa-bullhorn text-indigo-600"></i>
+                            <span>หน้าจอสำหรับผู้ประกาศ</span>
+                        </h2>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Current Announcement -->
+                            <div class="lg:col-span-2">
+                                <h3 class="text-xl font-semibold text-gray-700 mb-4">รายการที่จะประกาศ</h3>
+                                <div id="current-announcement-card" class="bg-indigo-50 p-8 rounded-lg shadow-inner min-h-[300px] flex items-center justify-center">
+                                    <!-- Current card will be injected here -->
+                                    <p class="text-gray-500">ไม่มีรายการรอประกาศ</p>
+                                </div>
+                                <div class="mt-4 flex justify-center space-x-4">
+                                    <button id="prev-btn" class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 flex items-center space-x-2">
+                                        <i class="fas fa-arrow-left"></i> <span>ย้อนกลับ (W)</span>
+                                    </button>
+                                    <button id="next-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 flex items-center space-x-2">
+                                        <span>ต่อไป (E)</span> <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Announced List -->
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-700 mb-4">ประกาศแล้ว</h3>
+                                <div id="announced-list" class="space-y-3 max-h-[60vh] overflow-y-auto bg-gray-50 p-4 rounded-lg">
+                                    <!-- Announced items will be listed here -->
+                                    <p class="text-gray-400 text-center">ยังไม่มีรายการที่ประกาศ</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -884,14 +922,15 @@
         });
 
         // --- Dashboard Data Loading & Filtering ---
-        let unsubscribeRecorded = null, unsubscribeOnline = null, unsubscribeRequests = null;
+        let unsubscribeRecorded = null, unsubscribeOnline = null, unsubscribeRequests = null, unsubscribeAnnouncer = null;
         let allDocsData = {}; // Cache for editing
-        let allRecordedData = [], allOnlineData = [], allRequestData = [];
+        let allRecordedData = [], allOnlineData = [], allRequestData = [], allAnnouncerData = [];
 
         function unsubscribeAllListeners() {
             if (unsubscribeRecorded) unsubscribeRecorded();
             if (unsubscribeOnline) unsubscribeOnline();
             if (unsubscribeRequests) unsubscribeRequests();
+            if (unsubscribeAnnouncer) unsubscribeAnnouncer();
         }
 
         function loadDashboardData() {
@@ -927,6 +966,12 @@
             unsubscribeRequests = onSnapshot(requestsRef, (snapshot) => {
                 allRequestData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderRequestsTable();
+            }, console.error);
+
+            const announcerRef = query(collection(db, "recorded_donations"), orderBy("createdAt", "asc"));
+            unsubscribeAnnouncer = onSnapshot(announcerRef, (snapshot) => {
+                allAnnouncerData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAnnouncerView();
             }, console.error);
         }
 
@@ -1025,6 +1070,58 @@
                             <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="tax_receipt_requests"><i class="fas fa-trash-alt"></i></button></td>
                         </tr>`;
                 });
+            }
+        }
+
+        function renderAnnouncerView() {
+            const unannounced = allAnnouncerData.filter(d => !d.announced);
+            const announced = allAnnouncerData.filter(d => d.announced);
+
+            const currentCardContainer = document.getElementById('current-announcement-card');
+            const announcedListContainer = document.getElementById('announced-list');
+
+            // Render current announcement
+            if (unannounced.length > 0) {
+                const current = unannounced[0];
+                 currentCardContainer.innerHTML = `
+                    <div class="text-left w-full space-y-4" data-id="${current.id}">
+                        <div>
+                            <p class="text-2xl text-gray-600">ผู้บริจาค:</p>
+                            <p class="text-5xl font-bold text-indigo-700">${current.orgName}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                               <p class="text-xl text-gray-600">จำนวนเงิน:</p>
+                               <p class="text-3xl font-semibold text-green-600">${(current.amount || 0).toLocaleString('th-TH')} บาท</p>
+                            </div>
+                            <div>
+                               <p class="text-xl text-gray-600">ประเภท:</p>
+                               <p class="text-3xl font-semibold text-gray-800">${current.donationType}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-xl text-gray-600">หมายเหตุ:</p>
+                            <p class="text-2xl text-gray-800">${current.notes || '-'}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                currentCardContainer.innerHTML = '<p class="text-gray-500 text-2xl">ไม่มีรายการรอประกาศ</p>';
+            }
+
+            // Render announced list
+            announcedListContainer.innerHTML = '';
+            if (announced.length > 0) {
+                announced.slice().reverse().forEach(item => { // Show most recent announced first
+                    announcedListContainer.innerHTML += `
+                        <div class="bg-white p-3 rounded-md shadow-sm flex justify-between items-center">
+                            <span class="text-gray-800">${item.orgName}</span>
+                            <span class="font-semibold text-green-700">${(item.amount || 0).toLocaleString('th-TH')} ฿</span>
+                        </div>
+                    `;
+                });
+            } else {
+                announcedListContainer.innerHTML = '<p class="text-gray-400 text-center">ยังไม่มีรายการที่ประกาศ</p>';
             }
         }
 
@@ -1232,6 +1329,60 @@
                 }, 500);
             });
         });
+
+        // --- Announcer Logic ---
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+
+        async function handleNextAnnouncement() {
+            const unannounced = allAnnouncerData.filter(d => !d.announced);
+            if (unannounced.length > 0) {
+                const docId = unannounced[0].id;
+                try {
+                    await updateDoc(doc(db, "recorded_donations", docId), { announced: true });
+                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true });
+                    Toast.fire({ icon: 'success', title: 'บันทึกการประกาศแล้ว' });
+                } catch (err) {
+                    console.error("Error updating announcement status:", err);
+                    Swal.fire('ผิดพลาด!', 'ไม่สามารถบันทึกสถานะการประกาศได้', 'error');
+                }
+            }
+        }
+
+        async function handlePreviousAnnouncement() {
+            const announced = allAnnouncerData.filter(d => d.announced);
+            if (announced.length > 0) {
+                const lastAnnouncedItem = announced[announced.length - 1]; 
+                const docId = lastAnnouncedItem.id;
+                try {
+                    await updateDoc(doc(db, "recorded_donations", docId), { announced: false });
+                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true });
+                    Toast.fire({ icon: 'info', title: 'ย้อนกลับรายการล่าสุดแล้ว' });
+                } catch (err) {
+                    console.error("Error reverting announcement status:", err);
+                    Swal.fire('ผิดพลาด!', 'ไม่สามารถย้อนกลับสถานะการประกาศได้', 'error');
+                }
+            }
+        }
+
+        nextBtn.addEventListener('click', handleNextAnnouncement);
+        prevBtn.addEventListener('click', handlePreviousAnnouncement);
+        
+        document.addEventListener('keydown', async (e) => {
+            const announcerTab = document.getElementById('announcer');
+            if (!announcerTab.classList.contains('active') || !auth.currentUser) return;
+    
+            if (e.key === 'PageDown' || e.key.toLowerCase() === 'e') {
+                e.preventDefault();
+                handleNextAnnouncement();
+            }
+    
+            if (e.key.toLowerCase() === 'w') {
+                e.preventDefault();
+                handlePreviousAnnouncement();
+            }
+        });
     </script>
 </body>
 </html>
+
