@@ -51,9 +51,12 @@
 </head>
 <body>
 
-    <div class="flex min-h-screen">
+    <div class="relative min-h-screen md:flex">
+        <!-- Mobile menu overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+
         <!-- Sidebar Navigation -->
-        <aside class="sidebar w-64 shadow-xl flex-shrink-0">
+        <aside id="sidebar" class="sidebar w-64 shadow-xl flex-shrink-0 fixed inset-y-0 left-0 z-40 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0">
             <div class="p-4 text-center border-b border-gray-700 flex flex-col items-center">
                 <img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="โลโก้วัดไชยามาตย์" class="h-24 w-24">
                 <h1 class="text-xl font-bold text-white mt-2">วัดไชยามาตย์</h1>
@@ -109,19 +112,28 @@
 
         <!-- Main Content -->
         <div class="flex-1 p-4 md:p-10 overflow-y-auto">
-             <header class="text-center mb-8">
-                <h1 class="header-title text-4xl font-bold">ระบบจัดการบุญ</h1>
+             <header class="relative text-center mb-8">
+                <button id="menu-btn" class="absolute top-0 left-0 md:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 z-20">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+                <h1 class="header-title text-3xl md:text-4xl font-bold">ระบบจัดการบุญ</h1>
                 <p class="header-subtitle mt-2">บริหารจัดการข้อมูลการบริจาคและออกใบลดหย่อนภาษี</p>
             </header>
             <main>
                 <!-- Section 1: Online Donation -->
                 <div id="donate" class="tab-content active">
-                     <div class="card p-8 rounded-lg shadow-lg">
-                        <h2 class="card-title text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
+                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                        <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-donate text-indigo-600"></i>
                             <span>ระบบบริจาคออนไลน์</span>
                         </h2>
-                        <div class="grid md:grid-cols-2 gap-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                             <!-- QR Code Section -->
+                            <div class="flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300">
+                                <h3 class="text-xl font-semibold mb-4 text-gray-700">สแกน QR Code เพื่อบริจาค</h3>
+                                <img src="https://img2.pic.in.th/pic/099400240646898.png" alt="QR Code for Donation" class="w-64 h-64 object-contain rounded-md shadow-lg">
+                                <p class="mt-4 text-center text-gray-700">ใช้แอปพลิเคชันธนาคารบนมือถือของคุณ<br>เพื่อสแกนและทำการบริจาค</p>
+                            </div>
                             <!-- Donation Form -->
                             <form id="donate-form">
                                 <div class="space-y-6">
@@ -159,20 +171,14 @@
                                     </div>
                                 </div>
                             </form>
-                            <!-- QR Code Section -->
-                            <div class="flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300">
-                                <h3 class="text-xl font-semibold mb-4 text-gray-700">สแกน QR Code เพื่อบริจาค</h3>
-                                <img src="https://img2.pic.in.th/pic/099400240646898.png" alt="QR Code for Donation" class="w-64 h-64 object-contain rounded-md shadow-lg">
-                                <p class="mt-4 text-center text-gray-700">ใช้แอปพลิเคชันธนาคารบนมือถือของคุณ<br>เพื่อสแกนและทำการบริจาค</p>
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Section 2: Record Donation -->
                 <div id="record" class="tab-content">
-                     <div class="card p-8 rounded-lg shadow-lg">
-                        <h2 class="card-title text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
+                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                        <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-edit text-indigo-600"></i>
                             <span>ระบบบันทึกบริจาค (สำหรับเจ้าหน้าที่)</span>
                         </h2>
@@ -272,8 +278,8 @@
 
                 <!-- Section 3: Request Tax Receipt -->
                 <div id="request-receipt" class="tab-content">
-                     <div class="card p-8 rounded-lg shadow-lg">
-                        <h2 class="card-title text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
+                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                        <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-file-invoice-dollar text-indigo-600"></i>
                             <span>ระบบขอใบลดหย่อนภาษี</span>
                         </h2>
@@ -346,14 +352,14 @@
 
                 <!-- Section 4: Dashboard -->
                 <div id="dashboard" class="tab-content">
-                     <div class="card p-8 rounded-lg shadow-lg">
-                        <h2 class="card-title text-2xl font-bold border-b-2 pb-4 mb-8 flex items-center space-x-3">
+                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                        <h2 class="card-title text-xl md:text-2xl font-bold border-b-2 pb-4 mb-8 flex items-center space-x-3">
                             <i class="fas fa-chart-pie text-indigo-600"></i>
                             <span>สรุปผล Dashboard</span>
                         </h2>
                         
                         <!-- Stats Cards -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                             <div class="bg-blue-100 p-6 rounded-lg shadow">
                                 <h3 class="text-blue-700 text-sm font-medium">ยอดบริจาคทั้งหมด (บาท)</h3>
                                 <p id="total-donation-amount" class="text-3xl font-bold text-gray-900">฿ 0.00</p>
@@ -374,7 +380,7 @@
 
                         <!-- Dashboard Sub-navigation -->
                         <div class="border-b border-gray-200">
-                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                            <nav class="-mb-px flex flex-wrap space-x-8" aria-label="Tabs">
                                 <button class="dashboard-nav-link active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" data-subtab="recorded">
                                     ข้อมูลที่เจ้าหน้าที่บันทึก
                                 </button>
@@ -390,18 +396,16 @@
                         <!-- Dashboard Sub-content -->
                         <div class="mt-8">
                             <div id="dashboard-recorded" class="dashboard-sub-content active">
-                                <div class="flex justify-between items-center mb-4">
-                                    <div class="flex items-center space-x-4">
-                                        <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลที่เจ้าหน้าที่บันทึก</h3>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="text" id="start-date-recorded" class="date-filter border rounded px-2 py-1" placeholder="วันที่เริ่มต้น">
-                                            <input type="text" id="end-date-recorded" class="date-filter border rounded px-2 py-1" placeholder="วันที่สิ้นสุด">
-                                        </div>
+                                <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                                    <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลที่เจ้าหน้าที่บันทึก</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" id="start-date-recorded" class="date-filter border rounded px-2 py-1 w-36" placeholder="วันที่เริ่มต้น">
+                                        <input type="text" id="end-date-recorded" class="date-filter border rounded px-2 py-1 w-36" placeholder="วันที่สิ้นสุด">
+                                        <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-recorded-body" data-title="รายงานข้อมูลที่เจ้าหน้าที่บันทึก">
+                                            <i class="fas fa-print"></i>
+                                            <span>พิมพ์</span>
+                                        </button>
                                     </div>
-                                    <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-recorded-body" data-title="รายงานข้อมูลที่เจ้าหน้าที่บันทึก">
-                                        <i class="fas fa-print"></i>
-                                        <span>พิมพ์รายงาน</span>
-                                    </button>
                                 </div>
                                 <div class="overflow-x-auto border rounded-lg">
                                     <table class="min-w-full">
@@ -422,18 +426,16 @@
                                 </div>
                             </div>
                             <div id="dashboard-online" class="dashboard-sub-content">
-                                <div class="flex justify-between items-center mb-4">
-                                     <div class="flex items-center space-x-4">
-                                        <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลบริจาคออนไลน์</h3>
-                                        <div class="flex items-center space-x-2">
-                                            <input type="text" id="start-date-online" class="date-filter border rounded px-2 py-1" placeholder="วันที่เริ่มต้น">
-                                            <input type="text" id="end-date-online" class="date-filter border rounded px-2 py-1" placeholder="วันที่สิ้นสุด">
-                                        </div>
+                                <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                                    <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลบริจาคออนไลน์</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" id="start-date-online" class="date-filter border rounded px-2 py-1 w-36" placeholder="วันที่เริ่มต้น">
+                                        <input type="text" id="end-date-online" class="date-filter border rounded px-2 py-1 w-36" placeholder="วันที่สิ้นสุด">
+                                        <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-online-body" data-title="รายงานข้อมูลบริจาคออนไลน์">
+                                            <i class="fas fa-print"></i>
+                                            <span>พิมพ์</span>
+                                        </button>
                                     </div>
-                                    <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-online-body" data-title="รายงานข้อมูลบริจาคออนไลน์">
-                                        <i class="fas fa-print"></i>
-                                        <span>พิมพ์รายงาน</span>
-                                    </button>
                                 </div>
                                 <div class="overflow-x-auto border rounded-lg">
                                     <table class="min-w-full">
@@ -454,18 +456,16 @@
                                 </div>
                             </div>
                             <div id="dashboard-requests" class="dashboard-sub-content">
-                                <div class="flex justify-between items-center mb-4">
-                                     <div class="flex items-center space-x-4">
-                                        <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลคำขอใบลดหย่อนภาษี</h3>
-                                         <div class="flex items-center space-x-2">
-                                            <input type="text" id="start-date-requests" class="date-filter border rounded px-2 py-1" placeholder="วันที่เริ่มต้น">
-                                            <input type="text" id="end-date-requests" class="date-filter border rounded px-2 py-1" placeholder="วันที่สิ้นสุด">
-                                        </div>
+                                <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                                    <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลคำขอใบลดหย่อนภาษี</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" id="start-date-requests" class="date-filter border rounded px-2 py-1 w-36" placeholder="วันที่เริ่มต้น">
+                                        <input type="text" id="end-date-requests" class="date-filter border rounded px-2 py-1 w-36" placeholder="วันที่สิ้นสุด">
+                                        <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-requests-body" data-title="รายงานข้อมูลคำขอใบลดหย่อนภาษี">
+                                            <i class="fas fa-print"></i>
+                                            <span>พิมพ์</span>
+                                        </button>
                                     </div>
-                                    <button class="print-btn bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2" data-table-id="dashboard-table-requests-body" data-title="รายงานข้อมูลคำขอใบลดหย่อนภาษี">
-                                        <i class="fas fa-print"></i>
-                                        <span>พิมพ์รายงาน</span>
-                                    </button>
                                 </div>
                                 <div class="overflow-x-auto border rounded-lg">
                                     <table class="min-w-full">
@@ -494,7 +494,7 @@
                 <!-- Section 5: Announcer -->
                 <div id="announcer" class="tab-content">
                     <div class="card p-8 rounded-lg shadow-lg">
-                        <h2 class="card-title text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
+                        <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-bullhorn text-indigo-600"></i>
                             <span>หน้าจอสำหรับผู้ประกาศ</span>
                         </h2>
@@ -1360,7 +1360,7 @@
                     Toast.fire({ icon: 'info', title: 'ย้อนกลับรายการล่าสุดแล้ว' });
                 } catch (err) {
                     console.error("Error reverting announcement status:", err);
-                    Swal.fire('ผิดพลาด!', 'ไม่สามารถย้อนกลับสถานะการประกาศได้', 'error');
+                    Swالfire('ผิดพลาด!', 'ไม่สามารถย้อนกลับสถานะการประกาศได้', 'error');
                 }
             }
         }
@@ -1381,6 +1381,33 @@
                 e.preventDefault();
                 handlePreviousAnnouncement();
             }
+        });
+
+        // --- Mobile Menu Logic ---
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('translate-x-0');
+            overlay.classList.toggle('hidden');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+            overlay.classList.add('hidden');
+        });
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) { // md breakpoint
+                    sidebar.classList.add('-translate-x-full');
+                    sidebar.classList.remove('translate-x-0');
+                    overlay.classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>
