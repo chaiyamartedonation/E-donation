@@ -922,7 +922,7 @@
         });
 
         // --- Dashboard Data Loading & Filtering ---
-        let unsubscribeRecorded = null, unsubscribeOnline = null, unsubscribeRequests = null, unsubscribeAnnouncer = null;
+        let unsubscribeRecorded = null, unsubscribeOnline = null, unsubscribeRequests = null, unsubscribeAnnouncer = null, unsubscribeOnlineAnnouncer = null;
         let allDocsData = {}; // Cache for editing
         let allRecordedData = [], allOnlineData = [], allRequestData = [], allAnnouncerData = [];
 
@@ -931,6 +931,7 @@
             if (unsubscribeOnline) unsubscribeOnline();
             if (unsubscribeRequests) unsubscribeRequests();
             if (unsubscribeAnnouncer) unsubscribeAnnouncer();
+            if (unsubscribeOnlineAnnouncer) unsubscribeOnlineAnnouncer();
         }
 
         function loadDashboardData() {
@@ -968,10 +969,27 @@
                 renderRequestsTable();
             }, console.error);
 
-            const announcerRef = query(collection(db, "recorded_donations"), orderBy("createdAt", "asc"));
-            unsubscribeAnnouncer = onSnapshot(announcerRef, (snapshot) => {
-                allAnnouncerData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const announcerRecordedRef = query(collection(db, "recorded_donations"), orderBy("createdAt", "asc"));
+            const announcerOnlineRef = query(collection(db, "donations"), orderBy("createdAt", "asc"));
+
+            let recordedAnnouncerData = [];
+            let onlineAnnouncerData = [];
+
+            const mergeAndRenderAnnouncer = () => {
+                const combined = [...recordedAnnouncerData, ...onlineAnnouncerData];
+                combined.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds);
+                allAnnouncerData = combined;
                 renderAnnouncerView();
+            };
+
+            unsubscribeAnnouncer = onSnapshot(announcerRecordedRef, (snapshot) => {
+                recordedAnnouncerData = snapshot.docs.map(doc => ({ id: doc.id, collection: 'recorded_donations', name: doc.data().orgName, ...doc.data() }));
+                mergeAndRenderAnnouncer();
+            }, console.error);
+            
+            unsubscribeOnlineAnnouncer = onSnapshot(announcerOnlineRef, (snapshot) => {
+                 onlineAnnouncerData = snapshot.docs.map(doc => ({ id: doc.id, collection: 'donations', orgName: doc.data().name, donationType: doc.data().type, ...doc.data() }));
+                 mergeAndRenderAnnouncer();
             }, console.error);
         }
 
@@ -1084,10 +1102,10 @@
             if (unannounced.length > 0) {
                 const current = unannounced[0];
                  currentCardContainer.innerHTML = `
-                    <div class="text-left w-full space-y-4" data-id="${current.id}">
+                    <div class="text-left w-full space-y-4" data-id="${current.id}" data-collection="${current.collection}">
                         <div>
                             <p class="text-2xl text-gray-600">ผู้บริจาค:</p>
-                            <p class="text-5xl font-bold text-indigo-700">${current.orgName}</p>
+                            <p class="text-5xl font-bold text-indigo-700" style="word-break: break-word;">${current.orgName || current.name}</p>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -1096,7 +1114,7 @@
                             </div>
                             <div>
                                <p class="text-xl text-gray-600">ประเภท:</p>
-                               <p class="text-3xl font-semibold text-gray-800">${current.donationType}</p>
+                               <p class="text-3xl font-semibold text-gray-800">${current.donationType || current.type}</p>
                             </div>
                         </div>
                         <div>
@@ -1115,7 +1133,7 @@
                 announced.slice().reverse().forEach(item => { // Show most recent announced first
                     announcedListContainer.innerHTML += `
                         <div class="bg-white p-3 rounded-md shadow-sm flex justify-between items-center">
-                            <span class="text-gray-800">${item.orgName}</span>
+                            <span class="text-gray-800">${item.orgName || item.name}</span>
                             <span class="font-semibold text-green-700">${(item.amount || 0).toLocaleString('th-TH')} ฿</span>
                         </div>
                     `;
@@ -1255,85 +1273,81 @@
         });
 
         // --- Print Logic ---
-            document.querySelectorAll('.print-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const tableId = button.dataset.tableId;
-                    const title = button.dataset.title;
-                    const startDateEl = document.getElementById(`start-date-${tableId.split('-')[2]}`);
-                    const endDateEl = document.getElementById(`end-date-${tableId.split('-')[2]}`);
-                    const startDateVal = startDateEl ? startDateEl.value : null;
-                    const endDateVal = endDateEl ? endDateEl.value : null;
-            
-                    let dataToPrint;
-                    if (tableId.includes('recorded')) dataToPrint = allRecordedData;
-                    else if (tableId.includes('online')) dataToPrint = allOnlineData;
-                    else if (tableId.includes('requests')) dataToPrint = allRequestData;
-            
-                    const filteredData = filterDataByDate(dataToPrint, startDateVal ? new Date(startDateVal) : null, endDateVal ? new Date(endDateVal) : null);
-            
-                    let tableHeadHTML = '';
-                    let tableBodyHTML = '';
-                    let totalAmount = 0;
-            
-                    // Generate table based on ID
-                    if (tableId.includes('recorded')) {
-                        tableHeadHTML = `<tr><th>วันที่บันทึก</th><th>ชื่อ/องค์กร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
-                        filteredData.forEach(item => {
-                            totalAmount += item.amount || 0;
-                            tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.orgName}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
-                        });
-                        tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="4" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
-                    } else if (tableId.includes('online')) {
-                        tableHeadHTML = `<tr><th>วันที่</th><th>ชื่อ-นามสกุล</th><th>จำนวนเงิน</th><th>ประเภท</th><th>หมายเหตุ</th></tr>`;
-                        filteredData.forEach(item => {
-                            totalAmount += item.amount || 0;
-                            tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.name}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.type}</td><td>${item.notes || ''}</td></tr>`;
-                        });
-                        tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
-                    } else if (tableId.includes('requests')) {
-                        tableHeadHTML = `<tr><th>วันที่ยื่นขอ</th><th>เลขประจำตัวผู้เสียภาษี</th><th>ชื่อ-สกุล</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
-                        filteredData.forEach(item => {
-                            totalAmount += item.amount || 0;
-                            tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.taxId}</td><td>${item.fullName}</td><td>${item.phone}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
-                        });
-                        tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="4" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
-                    }
-            
-            
-                    const printWindow = window.open('', '', 'height=600,width=800');
-                    printWindow.document.write('<html><head><title>พิมพ์รายงาน</title>');
-                    printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
-                    //  vvv --- EDIT THIS LINE --- vvv
-                    printWindow.document.write(`<style> @page { margin: 1cm; } body { font-family: 'Sarabun', sans-serif; } table { width: 100%; border-collapse: collapse; font-size: 12px; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left;} th { background-color: #f2f2f2; } </style>`);
-                    //  ^^^ --- EDIT THIS LINE --- ^^^
-                    printWindow.document.write('</head><body >');
-                    //  vvv --- EDIT THIS LINE --- vvv
-                    printWindow.document.write('<div class="container mx-auto p-4">'); // Changed p-8 to p-4
-                    //  ^^^ --- EDIT THIS LINE --- ^^^
-                    printWindow.document.write('<div class="text-center mb-8">');
-                    printWindow.document.write('<img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="logo" class="h-24 w-24 mx-auto">');
-                    printWindow.document.write(`<h1 class="text-2xl font-bold mt-4">${title}</h1>`);
-                    printWindow.document.write(`<p>วัดไชยามาตย์</p>`);
-                    if (startDateVal || endDateVal) {
-                        printWindow.document.write(`<p>ช่วงวันที่: ${startDateVal || '...'} ถึง ${endDateVal || '...'}</p>`);
-                    }
-                    printWindow.document.write(`<p>วันที่พิมพ์: ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric'})}</p>`);
-                    printWindow.document.write('</div>');
-                    printWindow.document.write('<table>');
-                    printWindow.document.write(`<thead>${tableHeadHTML}</thead>`);
-                    printWindow.document.write(`<tbody>${tableBodyHTML}</tbody>`);
-                    printWindow.document.write('</table>');
-                    printWindow.document.write('</div>');
-                    printWindow.document.write('</body></html>');
-                    printWindow.document.close();
-            
-                    setTimeout(() => {
-                        printWindow.print();
-                        printWindow.close();
-                    }, 500);
-                });
+        document.querySelectorAll('.print-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const tableId = button.dataset.tableId;
+                const title = button.dataset.title;
+                const startDateEl = document.getElementById(`start-date-${tableId.split('-')[2]}`);
+                const endDateEl = document.getElementById(`end-date-${tableId.split('-')[2]}`);
+                const startDateVal = startDateEl ? startDateEl.value : null;
+                const endDateVal = endDateEl ? endDateEl.value : null;
+
+                let dataToPrint;
+                if (tableId.includes('recorded')) dataToPrint = allRecordedData;
+                else if (tableId.includes('online')) dataToPrint = allOnlineData;
+                else if (tableId.includes('requests')) dataToPrint = allRequestData;
+                
+                const filteredData = filterDataByDate(dataToPrint, startDateVal ? new Date(startDateVal) : null, endDateVal ? new Date(endDateVal) : null);
+
+                let tableHeadHTML = '';
+                let tableBodyHTML = '';
+                let totalAmount = 0;
+
+                // Generate table based on ID
+                if (tableId.includes('recorded')) {
+                    tableHeadHTML = `<tr><th>วันที่บันทึก</th><th>ประเภทผู้บริจาค</th><th>เลขประจำตัว</th><th>ชื่อ/องค์กร</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>วัตถุประสงค์</th><th>สถานะใบเสร็จ</th><th>หมายเหตุ</th></tr>`;
+                    filteredData.forEach(item => {
+                        totalAmount += item.amount || 0;
+                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.donorType || ''}</td><td>${item.idNumber || ''}</td><td>${item.orgName}</td><td>${item.phone || ''}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.purpose}</td><td>${item.receiptStatus}</td><td>${item.notes || ''}</td></tr>`;
+                    });
+                    tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="5" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="4" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                } else if (tableId.includes('online')) {
+                    tableHeadHTML = `<tr><th>วันที่</th><th>ชื่อ-นามสกุล</th><th>จำนวนเงิน</th><th>ประเภท</th><th>หมายเหตุ</th></tr>`;
+                    filteredData.forEach(item => {
+                        totalAmount += item.amount || 0;
+                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.name}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.type}</td><td>${item.notes || ''}</td></tr>`;
+                    });
+                    tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                } else if (tableId.includes('requests')) {
+                    tableHeadHTML = `<tr><th>วันที่ยื่นขอ</th><th>เลขประจำตัวผู้เสียภาษี</th><th>ชื่อ-สกุล</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
+                     filteredData.forEach(item => {
+                        totalAmount += item.amount || 0;
+                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.taxId}</td><td>${item.fullName}</td><td>${item.phone}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
+                    });
+                     tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="4" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                }
+
+
+                const printWindow = window.open('', '', 'height=600,width=800');
+                printWindow.document.write('<html><head><title>พิมพ์รายงาน</title>');
+                printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+                 printWindow.document.write(`<style> body { font-family: 'Sarabun', sans-serif; } table { width: 100%; border-collapse: collapse; font-size: 12px; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left;} th { background-color: #f2f2f2; } </style>`);
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<div class="container mx-auto p-8">');
+                printWindow.document.write('<div class="text-center mb-8">');
+                printWindow.document.write('<img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="logo" class="h-24 w-24 mx-auto">');
+                printWindow.document.write(`<h1 class="text-2xl font-bold mt-4">${title}</h1>`);
+                printWindow.document.write(`<p>วัดไชยามาตย์</p>`);
+                 if(startDateVal || endDateVal) {
+                    printWindow.document.write(`<p>ช่วงวันที่: ${startDateVal || '...'} ถึง ${endDateVal || '...'}</p>`);
+                 }
+                printWindow.document.write(`<p>วันที่พิมพ์: ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric'})}</p>`);
+                printWindow.document.write('</div>');
+                printWindow.document.write('<table>');
+                printWindow.document.write(`<thead>${tableHeadHTML}</thead>`);
+                printWindow.document.write(`<tbody>${tableBodyHTML}</tbody>`);
+                printWindow.document.write('</table>');
+                printWindow.document.write('</div>');
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
             });
-        
+        });
+
         // --- Announcer Logic ---
         const nextBtn = document.getElementById('next-btn');
         const prevBtn = document.getElementById('prev-btn');
@@ -1341,9 +1355,9 @@
         async function handleNextAnnouncement() {
             const unannounced = allAnnouncerData.filter(d => !d.announced);
             if (unannounced.length > 0) {
-                const docId = unannounced[0].id;
+                const docToUpdate = unannounced[0];
                 try {
-                    await updateDoc(doc(db, "recorded_donations", docId), { announced: true });
+                    await updateDoc(doc(db, docToUpdate.collection, docToUpdate.id), { announced: true });
                     const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true });
                     Toast.fire({ icon: 'success', title: 'บันทึกการประกาศแล้ว' });
                 } catch (err) {
@@ -1358,8 +1372,9 @@
             if (announced.length > 0) {
                 const lastAnnouncedItem = announced.slice().sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)[0];
                 const docId = lastAnnouncedItem.id;
+                const collectionName = lastAnnouncedItem.collection;
                 try {
-                    await updateDoc(doc(db, "recorded_donations", docId), { announced: false });
+                    await updateDoc(doc(db, collectionName, docId), { announced: false });
                     const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true });
                     Toast.fire({ icon: 'info', title: 'ย้อนกลับรายการล่าสุดแล้ว' });
                 } catch (err) {
