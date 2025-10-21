@@ -22,8 +22,9 @@
     <style>
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f0f9ff;
+            background-color: #f1f5f9;
         }
+
         .background-animation {
             position: fixed;
             top: 0;
@@ -32,23 +33,26 @@
             height: 100vh;
             z-index: -1;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
         }
+
         .glass {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         }
+
         .sidebar {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(25, 28, 44, 0.5);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .nav-link {
-            color: #cbd5e1;
+            color: #e2e8f0;
             transition: all 0.2s ease-in-out;
             border-left: 4px solid transparent;
         }
@@ -57,22 +61,26 @@
             color: white;
         }
         .nav-link.active {
-            border-left-color: #2dd4bf; /* teal-400 */
-            background-color: rgba(20, 184, 166, 0.3);
+            border-left-color: #818cf8; /* indigo-400 */
+            background-color: rgba(79, 70, 229, 0.3);
             color: white;
         }
+
         .header-title { color: #1e293b; }
         .header-subtitle { color: #475569; }
-        .card { background-color: white; }
-        .table-header { background-color: #f1f5f9; }
-        .table-header-text { color: #475569; }
-        .hover-row:hover { background-color: #f0f9ff; }
-        
+
         .tab-content, .dashboard-sub-content { display: none; }
         .tab-content.active, .dashboard-sub-content.active { display: block; }
         input:disabled, select:disabled, button:disabled { background-color: #e5e7eb; cursor: not-allowed; opacity: 0.7; }
-        .dashboard-nav-link { border-color: transparent; transition: all 0.2s ease-in-out; color: #64748b; }
-        .dashboard-nav-link.active { border-color: #5b21b6; color: #5b21b6; }
+        .dashboard-nav-link { border-color: transparent; transition: all 0.2s ease-in-out; color: #6b7280; }
+        .dashboard-nav-link.active { border-color: #4f46e5; color: #4338ca; } /* indigo-600, indigo-700 */
+
+        .home-total-card {
+            background: rgba(79, 70, 229, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -84,15 +92,15 @@
 
         <!-- Sidebar Navigation -->
         <aside id="sidebar" class="sidebar w-64 shadow-xl flex-shrink-0 fixed inset-y-0 left-0 z-40 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0">
-            <div class="p-4 text-center border-b border-gray-500/30 flex flex-col items-center">
+            <div class="p-4 text-center border-b border-gray-700/50 flex flex-col items-center">
                 <img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="โลโก้วัดไชยามาตย์" class="h-24 w-24">
                 <h1 class="text-xl font-bold text-white mt-2">วัดไชยามาตย์</h1>
                 <div class="w-full p-4">
-                    <button id="login-btn" class="w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-600 transition duration-300 flex items-center justify-center space-x-2">
+                    <button id="login-btn" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 flex items-center justify-center space-x-2">
                         <i class="fas fa-sign-in-alt"></i>
                         <span>เจ้าหน้าที่ Login</span>
                     </button>
-                     <button id="logout-btn" class="hidden w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300 flex items-center justify-center space-x-2">
+                     <button id="logout-btn" class="hidden w-full bg-red-600 text-white font-bold py-2 px-4 rounded-md hover:bg-red-700 transition duration-300 flex items-center justify-center space-x-2">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </button>
@@ -155,16 +163,16 @@
                  <div id="home" class="tab-content active">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <!-- Main total amount display -->
-                        <div class="lg:col-span-2 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-xl shadow-2xl p-8 flex flex-col justify-center items-center">
+                        <div class="lg:col-span-2 home-total-card text-white rounded-xl shadow-2xl p-8 flex flex-col justify-center items-center">
                             <h2 class="text-3xl font-semibold opacity-80">ยอดบริจาครวมทั้งหมด</h2>
                             <p id="home-total-amount" class="text-7xl xl:text-8xl font-bold my-4 tracking-tight">฿ 0.00</p>
                             <p class="opacity-80">ขออนุโมทนาบุญกับทุกท่าน</p>
                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 w-full max-w-md">
-                                <button id="home-donate-btn" class="bg-teal-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-teal-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
+                                <button id="home-donate-btn" class="bg-green-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
                                     <i class="fas fa-donate"></i>
                                     <span>ร่วมทำบุญบริจาค</span>
                                 </button>
-                                 <button id="home-receipt-btn" class="bg-indigo-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-indigo-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
+                                 <button id="home-receipt-btn" class="bg-blue-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
                                     <i class="fas fa-file-invoice-dollar"></i>
                                     <span>ขอใบลดหย่อนภาษี</span>
                                 </button>
@@ -183,16 +191,10 @@
                 <!-- Section 1: Online Donation -->
                 <div id="donate" class="tab-content">
                      <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
-                        <div class="flex justify-between items-center mb-6 border-b-2 pb-4">
-                            <h2 class="card-title text-xl md:text-2xl font-bold flex items-center space-x-3">
-                                <i class="fas fa-donate text-teal-600"></i>
-                                <span>ระบบบริจาคออนไลน์</span>
-                            </h2>
-                             <button class="back-to-home-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300 flex items-center space-x-2">
-                                <i class="fas fa-arrow-left"></i>
-                                <span>กลับหน้าหลัก</span>
-                            </button>
-                        </div>
+                        <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
+                            <i class="fas fa-donate text-indigo-600"></i>
+                            <span>ระบบบริจาคออนไลน์</span>
+                        </h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                              <!-- QR Code Section -->
                             <div class="flex flex-col items-center justify-center p-6 rounded-lg">
@@ -205,21 +207,21 @@
                                 <div class="space-y-6">
                                     <div>
                                         <label for="donor-name-1" class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล</label>
-                                        <input type="text" id="donor-name-1" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500" placeholder="กรอกชื่อ-นามสกุล" required>
+                                        <input type="text" id="donor-name-1" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="กรอกชื่อ-นามสกุล" required>
                                     </div>
                                     <div>
                                         <label for="amount-1" class="block text-sm font-medium text-gray-700 mb-1">จำนวนเงินบริจาค (บาท)</label>
-                                        <input type="number" id="amount-1" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500" placeholder="ระบุจำนวนเงิน" required>
+                                        <input type="number" id="amount-1" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="ระบุจำนวนเงิน" required>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">ประเภทการบริจาค</label>
                                         <div class="space-y-2">
-                                            <div class="flex items-center"><input type="radio" name="donation-type-1" value="เงินสดนำส่งที่วัด" class="h-4 w-4 text-teal-600 border-gray-300 focus:ring-teal-500" checked> <span class="ml-3 text-gray-700">เงินสดนำส่งที่วัด</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-1" value="โอนผ่านธนาคาร" class="h-4 w-4 text-teal-600 border-gray-300 focus:ring-teal-500"> <span class="ml-3 text-gray-700">โอนผ่านธนาคาร (ลดหย่อนภาษีได้ทันที)</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-1" value="โรงทาน" class="h-4 w-4 text-teal-600 border-gray-300 focus:ring-teal-500"> <span class="ml-3 text-gray-700">โรงทาน</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-1" value="ทรัพย์สิน" class="h-4 w-4 text-teal-600 border-gray-300 focus:ring-teal-500"> <span class="ml-3 text-gray-700">ทรัพย์สิน</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-1" value="เงินสดนำส่งที่วัด" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500" checked> <span class="ml-3 text-gray-700">เงินสดนำส่งที่วัด</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-1" value="โอนผ่านธนาคาร" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"> <span class="ml-3 text-gray-700">โอนผ่านธนาคาร (ลดหย่อนภาษีได้ทันที)</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-1" value="โรงทาน" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"> <span class="ml-3 text-gray-700">โรงทาน</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-1" value="ทรัพย์สิน" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"> <span class="ml-3 text-gray-700">ทรัพย์สิน</span></div>
                                             <div class="flex items-center">
-                                                <input type="radio" name="donation-type-1" value="อื่น ๆ" class="h-4 w-4 text-teal-600 border-gray-300 focus:ring-teal-500">
+                                                <input type="radio" name="donation-type-1" value="อื่น ๆ" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
                                                 <span class="ml-3 text-gray-700">อื่น ๆ</span>
                                                 <input type="text" id="other-type-1" class="ml-2 flex-grow p-2 border rounded-md" placeholder="โปรดระบุ">
                                             </div>
@@ -227,10 +229,10 @@
                                     </div>
                                     <div>
                                         <label for="notes-1" class="block text-sm font-medium text-gray-700 mb-1">หมายเหตุ</label>
-                                        <textarea id="notes-1" rows="3" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"></textarea>
+                                        <textarea id="notes-1" rows="3" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                                     </div>
                                     <div>
-                                        <button type="submit" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-md hover:bg-teal-700 transition duration-300 flex items-center justify-center space-x-2">
+                                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-300 flex items-center justify-center space-x-2">
                                             <i class="fas fa-paper-plane"></i>
                                             <span>ส่งข้อมูล</span>
                                         </button>
@@ -245,7 +247,7 @@
                 <div id="record" class="tab-content">
                      <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
-                            <i class="fas fa-edit text-teal-600"></i>
+                            <i class="fas fa-edit text-indigo-600"></i>
                             <span>ระบบบันทึกบริจาค (สำหรับเจ้าหน้าที่)</span>
                         </h2>
                         <form id="record-form" class="space-y-8">
@@ -255,7 +257,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                                     <div>
                                         <label for="donor-type-2" class="block text-sm font-medium text-gray-700 mb-1">ประเภทผู้บริจาค</label>
-                                        <select id="donor-type-2" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                        <select id="donor-type-2" class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                                             <option>บุคคลธรรมดา</option>
                                             <option>นิติบุคคล/องค์กร</option>
                                         </select>
@@ -286,11 +288,11 @@
                                     <div class="md:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">ประเภทการบริจาค</label>
                                         <div class="flex flex-wrap gap-4">
-                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="เงินสด" checked class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">เงินสด</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="โอนผ่านธนาคาร" class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">โอนผ่านธนาคาร</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="โรงทาน" class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">โรงทาน</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="ทรัพย์สิน" class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">ทรัพย์สิน</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="อื่น ๆ" class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">อื่น ๆ</span> <input type="text" id="other-type-2" class="ml-2 p-1 border rounded-md"></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="เงินสด" checked class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">เงินสด</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="โอนผ่านธนาคาร" class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">โอนผ่านธนาคาร</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="โรงทาน" class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">โรงทาน</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="ทรัพย์สิน" class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">ทรัพย์สิน</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-2" value="อื่น ๆ" class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">อื่น ๆ</span> <input type="text" id="other-type-2" class="ml-2 p-1 border rounded-md"></div>
                                         </div>
                                     </div>
                                     <div>
@@ -299,7 +301,7 @@
                                     </div>
                                     <div>
                                         <label for="purpose-2" class="block text-sm font-medium text-gray-700 mb-1">วัตถุประสงค์การบริจาค</label>
-                                        <select id="purpose-2" class="w-full p-3 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500">
+                                        <select id="purpose-2" class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
                                             <option selected>เพื่อสมทบกฐินสามัคคี ประจำปี 2568</option>
                                             <option>เพื่อดำเนินการทั่วไป</option>
                                             <option disabled>เพื่องานนมัสการพระธาตุฯ ประจำปี 2569</option>
@@ -316,11 +318,11 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-2">เอกสารหลักฐาน</label>
                                         <div class="flex space-x-6">
                                             <div class="flex items-center">
-                                                <input type="radio" id="receipt-yes" name="receipt-request" value="yes" class="h-4 w-4 text-teal-600">
+                                                <input type="radio" id="receipt-yes" name="receipt-request" value="yes" class="h-4 w-4 text-indigo-600">
                                                 <label for="receipt-yes" class="ml-2 text-gray-700">ต้องการรับใบลดหย่อนภาษี</label>
                                             </div>
                                             <div class="flex items-center">
-                                                <input type="radio" id="receipt-no" name="receipt-request" value="no" checked class="h-4 w-4 text-teal-600">
+                                                <input type="radio" id="receipt-no" name="receipt-request" value="no" checked class="h-4 w-4 text-indigo-600">
                                                 <label for="receipt-no" class="ml-2 text-gray-700">ไม่ต้องการรับใบลดหย่อนภาษี</label>
                                             </div>
                                         </div>
@@ -333,7 +335,7 @@
                             </fieldset>
 
                             <div class="text-right">
-                                <button type="submit" class="bg-teal-600 text-white font-bold py-3 px-6 rounded-md hover:bg-teal-700 transition duration-300 flex items-center justify-center space-x-2">
+                                <button type="submit" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition duration-300 flex items-center justify-center space-x-2">
                                     <i class="fas fa-save"></i>
                                     <span>บันทึกข้อมูล</span>
                                 </button>
@@ -345,16 +347,10 @@
                 <!-- Section 3: Request Tax Receipt -->
                 <div id="request-receipt" class="tab-content">
                      <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
-                        <div class="flex justify-between items-center mb-6 border-b-2 pb-4">
-                            <h2 class="card-title text-xl md:text-2xl font-bold flex items-center space-x-3">
-                                <i class="fas fa-file-invoice-dollar text-teal-600"></i>
-                                <span>ระบบขอใบลดหย่อนภาษี</span>
-                            </h2>
-                            <button class="back-to-home-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300 flex items-center space-x-2">
-                                <i class="fas fa-arrow-left"></i>
-                                <span>กลับหน้าหลัก</span>
-                            </button>
-                        </div>
+                        <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
+                            <i class="fas fa-file-invoice-dollar text-indigo-600"></i>
+                            <span>ระบบขอใบลดหย่อนภาษี</span>
+                        </h2>
                         <form id="request-receipt-form" class="space-y-8">
                             <fieldset class="border p-6 rounded-md">
                                 <legend class="text-lg font-semibold px-2 text-gray-700">ส่วนที่ 1: ข้อมูลทั่วไป</legend>
@@ -380,11 +376,11 @@
                                     <div class="md:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">ประเภทการบริจาค</label>
                                         <div class="flex flex-wrap gap-4">
-                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="เงินสด" checked class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">เงินสด</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="โอนผ่านธนาคาร" class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">โอนผ่านธนาคาร</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="โรงทาน" class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">โรงทาน</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="ทรัพย์สิน" class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">ทรัพย์สิน</span></div>
-                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="อื่น ๆ" class="h-4 w-4 text-teal-600"> <span class="ml-2 text-gray-700">อื่น ๆ</span> <input type="text" id="other-type-3" class="ml-2 p-1 border rounded-md"></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="เงินสด" checked class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">เงินสด</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="โอนผ่านธนาคาร" class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">โอนผ่านธนาคาร</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="โรงทาน" class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">โรงทาน</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="ทรัพย์สิน" class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">ทรัพย์สิน</span></div>
+                                            <div class="flex items-center"><input type="radio" name="donation-type-3" value="อื่น ๆ" class="h-4 w-4 text-indigo-600"> <span class="ml-2 text-gray-700">อื่น ๆ</span> <input type="text" id="other-type-3" class="ml-2 p-1 border rounded-md"></div>
                                         </div>
                                     </div>
                                     <div>
@@ -402,18 +398,18 @@
                                 <legend class="text-lg font-semibold px-2 text-gray-700">ส่วนที่ 3: เงื่อนไขการยอมรับ</legend>
                                 <div class="space-y-4 mt-4">
                                     <div class="flex items-start">
-                                        <input id="consent-revenue" name="consent-revenue" type="checkbox" class="h-5 w-5 mt-1 text-teal-600 border-gray-300 rounded">
+                                        <input id="consent-revenue" name="consent-revenue" type="checkbox" class="h-5 w-5 mt-1 text-indigo-600 border-gray-300 rounded">
                                         <label for="consent-revenue" class="ml-3 text-gray-700">ยินยอมให้นำข้อมูลการบริจาคเข้าสู่ระบบของกรมสรรพากรเพื่อการลดหย่อนภาษี</label>
                                     </div>
                                     <div class="flex items-start">
-                                        <input id="consent-truth" name="consent-truth" type="checkbox" class="h-5 w-5 mt-1 text-teal-600 border-gray-300 rounded">
+                                        <input id="consent-truth" name="consent-truth" type="checkbox" class="h-5 w-5 mt-1 text-indigo-600 border-gray-300 rounded">
                                         <label for="consent-truth" class="ml-3 text-gray-700">ข้าพเจ้าขอรับรองว่าข้อมูลทั้งหมดที่บันทึกเป็นความจริงและถูกต้องทุกประการ</label>
                                     </div>
                                 </div>
                             </fieldset>
 
                             <div class="text-right">
-                                <button id="submit-receipt-request" type="submit" class="bg-teal-600 text-white font-bold py-3 px-6 rounded-md hover:bg-teal-700 transition duration-300 flex items-center justify-center space-x-2" disabled>
+                                <button id="submit-receipt-request" type="submit" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-md hover:bg-indigo-700 transition duration-300 flex items-center justify-center space-x-2" disabled>
                                     <i class="fas fa-file-import"></i>
                                     <span>ยื่นคำขอ</span>
                                 </button>
@@ -426,26 +422,26 @@
                 <div id="dashboard" class="tab-content">
                      <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold border-b-2 pb-4 mb-8 flex items-center space-x-3">
-                            <i class="fas fa-chart-pie text-teal-600"></i>
+                            <i class="fas fa-chart-pie text-indigo-600"></i>
                             <span>สรุปผล Dashboard</span>
                         </h2>
                         
                         <!-- Stats Cards -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                            <div class="glass p-6 rounded-lg shadow">
-                                <h3 class="text-teal-800 text-sm font-medium">ยอดบริจาคทั้งหมด (บาท)</h3>
+                            <div class="bg-blue-100 p-6 rounded-lg shadow">
+                                <h3 class="text-blue-700 text-sm font-medium">ยอดบริจาคทั้งหมด (บาท)</h3>
                                 <p id="total-donation-amount" class="text-3xl font-bold text-gray-900">฿ 0.00</p>
                             </div>
-                            <div class="glass p-6 rounded-lg shadow">
-                                <h3 class="text-green-800 text-sm font-medium">จำนวนผู้บริจาค (ที่บันทึก)</h3>
+                            <div class="bg-green-100 p-6 rounded-lg shadow">
+                                <h3 class="text-green-700 text-sm font-medium">จำนวนผู้บริจาค (ที่บันทึก)</h3>
                                 <p id="total-donors" class="text-3xl font-bold text-gray-900">0 คน</p>
                             </div>
-                            <div class="glass p-6 rounded-lg shadow">
-                                <h3 class="text-pink-800 text-sm font-medium">คำขอใบลดหย่อนภาษี</h3>
+                            <div class="bg-red-100 p-6 rounded-lg shadow">
+                                <h3 class="text-red-700 text-sm font-medium">คำขอใบลดหย่อนภาษี</h3>
                                 <p id="total-receipt-requests" class="text-3xl font-bold text-gray-900">0 รายการ</p>
                             </div>
-                            <div class="glass p-6 rounded-lg shadow">
-                                <h3 class="text-yellow-800 text-sm font-medium">สถานะรอดำเนินการ</h3>
+                            <div class="bg-orange-100 p-6 rounded-lg shadow">
+                                <h3 class="text-orange-800 text-sm font-medium">สถานะรอดำเนินการ</h3>
                                 <p id="pending-receipts" class="text-3xl font-bold text-gray-900">0 รายการ</p>
                             </div>
                         </div>
@@ -567,7 +563,7 @@
                 <div id="announcer" class="tab-content">
                     <div class="card glass p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
-                            <i class="fas fa-bullhorn text-teal-600"></i>
+                            <i class="fas fa-bullhorn text-indigo-600"></i>
                             <span>หน้าจอสำหรับผู้ประกาศ</span>
                         </h2>
 
@@ -583,7 +579,7 @@
                                     <button id="prev-btn" class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 flex items-center space-x-2">
                                         <i class="fas fa-arrow-left"></i> <span>ย้อนกลับ (W)</span>
                                     </button>
-                                    <button id="next-btn" class="bg-teal-600 text-white px-6 py-2 rounded-md hover:bg-teal-700 flex items-center space-x-2">
+                                    <button id="next-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 flex items-center space-x-2">
                                         <span>ต่อไป (E)</span> <i class="fas fa-arrow-right"></i>
                                     </button>
                                 </div>
@@ -615,7 +611,7 @@
                         <input id="password" type="password" placeholder="กรอกรหัส" class="mb-3 px-3 py-2 text-gray-700 bg-white rounded text-md shadow-sm w-full border" required>
                         <p id="login-error" class="text-red-600 text-sm mb-3 hidden">รหัสไม่ถูกต้อง</p>
                         <div class="items-center px-4 py-3">
-                            <button id="login-submit-btn" type="submit" class="px-4 py-2 bg-teal-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-teal-700">
+                            <button id="login-submit-btn" type="submit" class="px-4 py-2 bg-indigo-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-indigo-700">
                                 เข้าสู่ระบบ
                             </button>
                         </div>
@@ -705,7 +701,7 @@
                 </div>
     
                 <div class="items-center px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse mt-4">
-                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm">
                         บันทึก
                     </button>
                     <button id="edit-modal-close" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">
@@ -748,7 +744,7 @@
                 </div>
     
                 <div class="items-center px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse mt-4">
-                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm">
                         บันทึก
                     </button>
                     <button id="edit-online-modal-close" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">
@@ -799,7 +795,7 @@
                 </div>
     
                 <div class="items-center px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse mt-4">
-                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm">
                         บันทึก
                     </button>
                     <button id="edit-request-modal-close" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">
@@ -1192,7 +1188,7 @@
                 const homeTotalAmountEl = document.getElementById('home-total-amount');
     
                 if (!homeCountUp) {
-                    homeCountUp = new CountUp(homeTotalAmountEl, totalAmount, {
+                    homeCountUp = new countUp.CountUp(homeTotalAmountEl, totalAmount, {
                         prefix: '฿ ',
                         decimalPlaces: 2,
                         duration: 2.5,
