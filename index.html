@@ -22,69 +22,41 @@
     <style>
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #f9fafb; /* gray-50 */
         }
-
-        .background-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            overflow: hidden;
-            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-        }
-
-        .glass {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        }
-
         .sidebar {
-            background: rgba(25, 28, 44, 0.5);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: #1f2937; /* gray-800 */
         }
-
         .nav-link {
-            color: #e2e8f0;
+            color: #d1d5db; /* gray-300 */
             transition: all 0.2s ease-in-out;
             border-left: 4px solid transparent;
         }
         .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: #374151; /* gray-700 */
             color: white;
         }
         .nav-link.active {
-            border-left-color: #818cf8; /* indigo-400 */
-            background-color: rgba(79, 70, 229, 0.3);
+            border-left-color: #4f46e5; /* indigo-600 */
+            background-color: #111827; /* gray-900 */
             color: white;
         }
-
-        .header-title { color: #1e293b; }
-        .header-subtitle { color: #475569; }
-
+        .header-title { color: #111827; } /* gray-900 */
+        .header-subtitle { color: #6b7280; } /* gray-500 */
+        .card { background-color: white; }
+        .card-title { color: #111827; border-color: #e5e7eb;} /* gray-900, gray-200 */
+        .table-header { background-color: #f3f4f6; } /* gray-100 */
+        .table-header-text { color: #4b5563; } /* gray-600 */
+        .hover-row:hover { background-color: #eef2ff; } /* indigo-50 */
+        
         .tab-content, .dashboard-sub-content { display: none; }
         .tab-content.active, .dashboard-sub-content.active { display: block; }
         input:disabled, select:disabled, button:disabled { background-color: #e5e7eb; cursor: not-allowed; opacity: 0.7; }
         .dashboard-nav-link { border-color: transparent; transition: all 0.2s ease-in-out; color: #6b7280; }
         .dashboard-nav-link.active { border-color: #4f46e5; color: #4338ca; } /* indigo-600, indigo-700 */
-
-        .home-total-card {
-            background: rgba(79, 70, 229, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
     </style>
 </head>
 <body>
-    <div class="background-animation"></div>
 
     <div class="relative min-h-screen md:flex">
         <!-- Mobile menu overlay -->
@@ -92,7 +64,7 @@
 
         <!-- Sidebar Navigation -->
         <aside id="sidebar" class="sidebar w-64 shadow-xl flex-shrink-0 fixed inset-y-0 left-0 z-40 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0">
-            <div class="p-4 text-center border-b border-gray-700/50 flex flex-col items-center">
+            <div class="p-4 text-center border-b border-gray-700 flex flex-col items-center">
                 <img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="โลโก้วัดไชยามาตย์" class="h-24 w-24">
                 <h1 class="text-xl font-bold text-white mt-2">วัดไชยามาตย์</h1>
                 <div class="w-full p-4">
@@ -126,7 +98,7 @@
                     </div>
                 </div>
                 
-                <hr class="my-6 border-gray-700/50">
+                <hr class="my-6 border-gray-700">
 
                 <!-- Staff Section (Hidden by default) -->
                 <div id="staff-menu" class="hidden">
@@ -152,7 +124,7 @@
         <!-- Main Content -->
         <div class="flex-1 p-4 md:p-10 overflow-y-auto">
              <header class="relative text-center mb-8">
-                <button id="menu-btn" class="absolute top-0 left-0 md:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 z-20">
+                <button id="menu-btn" class="absolute top-0 left-0 md:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 z-20">
                     <i class="fas fa-bars text-2xl"></i>
                 </button>
                 <h1 class="header-title text-3xl md:text-4xl font-bold">ระบบจัดการบุญ</h1>
@@ -161,47 +133,43 @@
             <main>
                  <!-- Home Section -->
                  <div id="home" class="tab-content active">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Main total amount display -->
-                        <div class="lg:col-span-2 home-total-card text-white rounded-xl shadow-2xl p-8 flex flex-col justify-center items-center">
-                            <h2 class="text-3xl font-semibold opacity-80">ยอดบริจาครวมทั้งหมด</h2>
-                            <p id="home-total-amount" class="text-7xl xl:text-8xl font-bold my-4 tracking-tight">฿ 0.00</p>
-                            <p class="opacity-80">ขออนุโมทนาบุญกับทุกท่าน</p>
-                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 w-full max-w-md">
-                                <button id="home-donate-btn" class="bg-green-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
-                                    <i class="fas fa-donate"></i>
-                                    <span>ร่วมทำบุญบริจาค</span>
-                                </button>
-                                 <button id="home-receipt-btn" class="bg-blue-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
-                                    <i class="fas fa-file-invoice-dollar"></i>
-                                    <span>ขอใบลดหย่อนภาษี</span>
-                                </button>
-                            </div>
+                    <div class="card p-6 md:p-8 rounded-lg shadow-lg text-center">
+                        <h2 class="text-2xl font-bold text-gray-800">ยอดบริจาครวม ณ ปัจจุบัน</h2>
+                        <p id="home-total-amount" class="text-6xl font-bold text-indigo-600 my-4">฿ 0.00</p>
+                        <hr class="my-8">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">รายการบริจาคล่าสุด 5 รายการ</h3>
+                        <div id="recent-donations-list" class="space-y-3 text-left">
+                            <p class="text-center text-gray-500">กำลังโหลดข้อมูล...</p>
                         </div>
-        
-                        <!-- Recent donations list -->
-                        <div class="glass rounded-xl shadow-lg p-6 flex flex-col">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">รายการล่าสุด</h3>
-                            <div id="recent-donations-list" class="space-y-3 flex-grow max-h-[70vh] overflow-y-auto">
-                                <p class="text-center text-gray-500">กำลังโหลดข้อมูล...</p>
-                            </div>
+                        <hr class="my-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <button id="home-donate-btn" class="bg-green-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center space-x-3 text-xl">
+                                <i class="fas fa-donate"></i>
+                                <span>ร่วมทำบุญบริจาค</span>
+                            </button>
+                             <button id="home-receipt-btn" class="bg-blue-600 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center space-x-3 text-xl">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span>ขอใบลดหย่อนภาษี</span>
+                            </button>
                         </div>
                     </div>
                 </div>
                 <!-- Section 1: Online Donation -->
                 <div id="donate" class="tab-content">
-                     <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
-                        <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
-                            <i class="fas fa-donate text-indigo-600"></i>
-                            <span>ระบบบริจาคออนไลน์</span>
-                            <button class="back-to-home-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300 flex items-center space-x-2">
+                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                        <div class="flex justify-between items-center mb-6 border-b-2 pb-4">
+                            <h2 class="card-title text-xl md:text-2xl font-bold flex items-center space-x-3">
+                                <i class="fas fa-donate text-indigo-600"></i>
+                                <span>ระบบบริจาคออนไลน์</span>
+                            </h2>
+                             <button class="back-to-home-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300 flex items-center space-x-2">
                                 <i class="fas fa-arrow-left"></i>
                                 <span>กลับหน้าหลัก</span>
                             </button>
-                        </h2>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                              <!-- QR Code Section -->
-                            <div class="flex flex-col items-center justify-center p-6 rounded-lg">
+                            <div class="flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300">
                                 <h3 class="text-xl font-semibold mb-4 text-gray-700">สแกน QR Code เพื่อบริจาค</h3>
                                 <img src="https://img2.pic.in.th/pic/099400240646898.png" alt="QR Code for Donation" class="w-64 h-64 object-contain rounded-md shadow-lg">
                                 <p class="mt-4 text-center text-gray-700">ใช้แอปพลิเคชันธนาคารบนมือถือของคุณ<br>เพื่อสแกนและทำการบริจาค</p>
@@ -249,7 +217,7 @@
 
                 <!-- Section 2: Record Donation -->
                 <div id="record" class="tab-content">
-                     <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
+                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-edit text-indigo-600"></i>
                             <span>ระบบบันทึกบริจาค (สำหรับเจ้าหน้าที่)</span>
@@ -350,11 +318,17 @@
 
                 <!-- Section 3: Request Tax Receipt -->
                 <div id="request-receipt" class="tab-content">
-                     <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
-                        <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
-                            <i class="fas fa-file-invoice-dollar text-indigo-600"></i>
-                            <span>ระบบขอใบลดหย่อนภาษี</span>
-                        </h2>
+                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                        <div class="flex justify-between items-center mb-6 border-b-2 pb-4">
+                            <h2 class="card-title text-xl md:text-2xl font-bold flex items-center space-x-3">
+                                <i class="fas fa-file-invoice-dollar text-indigo-600"></i>
+                                <span>ระบบขอใบลดหย่อนภาษี</span>
+                            </h2>
+                            <button class="back-to-home-btn bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300 flex items-center space-x-2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>กลับหน้าหลัก</span>
+                            </button>
+                        </div>
                         <form id="request-receipt-form" class="space-y-8">
                             <fieldset class="border p-6 rounded-md">
                                 <legend class="text-lg font-semibold px-2 text-gray-700">ส่วนที่ 1: ข้อมูลทั่วไป</legend>
@@ -417,10 +391,6 @@
                                     <i class="fas fa-file-import"></i>
                                     <span>ยื่นคำขอ</span>
                                 </button>
-                                <button id="home-home-btn" class="bg-green-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-red-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
-                                    <i class="fas fa-home"></i>
-                                    <span>ย้อนกลับ</span>
-                                </button>
                             </div>
                         </form>
                     </div>
@@ -428,7 +398,7 @@
 
                 <!-- Section 4: Dashboard -->
                 <div id="dashboard" class="tab-content">
-                     <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
+                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold border-b-2 pb-4 mb-8 flex items-center space-x-3">
                             <i class="fas fa-chart-pie text-indigo-600"></i>
                             <span>สรุปผล Dashboard</span>
@@ -569,7 +539,7 @@
 
                 <!-- Section 5: Announcer -->
                 <div id="announcer" class="tab-content">
-                    <div class="card glass p-8 rounded-lg shadow-lg">
+                    <div class="card p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-bullhorn text-indigo-600"></i>
                             <span>หน้าจอสำหรับผู้ประกาศ</span>
@@ -1196,7 +1166,7 @@
                 const homeTotalAmountEl = document.getElementById('home-total-amount');
     
                 if (!homeCountUp) {
-                    homeCountUp = new countUp.CountUp(homeTotalAmountEl, totalAmount, {
+                    homeCountUp = new CountUp(homeTotalAmountEl, totalAmount, {
                         prefix: '฿ ',
                         decimalPlaces: 2,
                         duration: 2.5,
