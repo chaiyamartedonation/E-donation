@@ -1295,10 +1295,10 @@
 
                 // Generate table based on ID
                 if (tableId.includes('recorded')) {
-                    tableHeadHTML = `<tr><th>วันที่บันทึก</th><th>เลขประจำตัว</th><th>ชื่อ/องค์กร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
+                    tableHeadHTML = `<tr><th>วันที่บันทึก</th><th>ชื่อ/องค์กร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
                     filteredData.forEach(item => {
                         totalAmount += item.amount || 0;
-                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.idNumber || ''}</td><td>${item.orgName}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
+                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.orgName}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
                     });
                     tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="4" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
                 } else if (tableId.includes('online')) {
