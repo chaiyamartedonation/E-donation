@@ -12,44 +12,79 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.umd.min.js"></script>
+
+    <!-- Firebase v8 SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
     <style>
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f9fafb; /* gray-50 */
+            background-color: #f1f5f9;
         }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
         .sidebar {
-            background-color: #1f2937; /* gray-800 */
+            background: rgba(25, 28, 44, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .nav-link {
-            color: #d1d5db; /* gray-300 */
+            color: #e2e8f0;
             transition: all 0.2s ease-in-out;
             border-left: 4px solid transparent;
         }
         .nav-link:hover {
-            background-color: #374151; /* gray-700 */
+            background-color: rgba(255, 255, 255, 0.1);
             color: white;
         }
         .nav-link.active {
-            border-left-color: #4f46e5; /* indigo-600 */
-            background-color: #111827; /* gray-900 */
+            border-left-color: #818cf8; /* indigo-400 */
+            background-color: rgba(79, 70, 229, 0.3);
             color: white;
         }
-        .header-title { color: #111827; } /* gray-900 */
-        .header-subtitle { color: #6b7280; } /* gray-500 */
-        .card { background-color: white; }
-        .card-title { color: #111827; border-color: #e5e7eb;} /* gray-900, gray-200 */
-        .table-header { background-color: #f3f4f6; } /* gray-100 */
-        .table-header-text { color: #4b5563; } /* gray-600 */
-        .hover-row:hover { background-color: #eef2ff; } /* indigo-50 */
-        
+
+        .header-title { color: #1e293b; }
+        .header-subtitle { color: #475569; }
+
         .tab-content, .dashboard-sub-content { display: none; }
         .tab-content.active, .dashboard-sub-content.active { display: block; }
         input:disabled, select:disabled, button:disabled { background-color: #e5e7eb; cursor: not-allowed; opacity: 0.7; }
         .dashboard-nav-link { border-color: transparent; transition: all 0.2s ease-in-out; color: #6b7280; }
         .dashboard-nav-link.active { border-color: #4f46e5; color: #4338ca; } /* indigo-600, indigo-700 */
+
+        .home-total-card {
+            background: rgba(79, 70, 229, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body>
+    <div class="background-animation"></div>
 
     <div class="relative min-h-screen md:flex">
         <!-- Mobile menu overlay -->
@@ -57,7 +92,7 @@
 
         <!-- Sidebar Navigation -->
         <aside id="sidebar" class="sidebar w-64 shadow-xl flex-shrink-0 fixed inset-y-0 left-0 z-40 transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0">
-            <div class="p-4 text-center border-b border-gray-700 flex flex-col items-center">
+            <div class="p-4 text-center border-b border-gray-700/50 flex flex-col items-center">
                 <img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="โลโก้วัดไชยามาตย์" class="h-24 w-24">
                 <h1 class="text-xl font-bold text-white mt-2">วัดไชยามาตย์</h1>
                 <div class="w-full p-4">
@@ -74,9 +109,13 @@
             <nav class="mt-2">
                 <!-- User/Donor Section -->
                 <div>
-                    <h2 class="text-xs font-semibold text-gray-400 uppercase px-6 mb-2">สำหรับผู้บริจาค</h2>
+                    <h2 class="text-xs font-semibold text-gray-400 uppercase px-6 mb-2">เมนูหลัก</h2>
                     <div class="flex flex-col space-y-1">
-                        <button class="nav-link active w-full text-left py-3 px-6 flex items-center space-x-3" data-tab="donate">
+                        <button class="nav-link active w-full text-left py-3 px-6 flex items-center space-x-3" data-tab="home">
+                            <i class="fas fa-home w-5 text-center"></i>
+                            <span>หน้าหลัก</span>
+                        </button>
+                        <button class="nav-link w-full text-left py-3 px-6 flex items-center space-x-3" data-tab="donate">
                             <i class="fas fa-donate w-5 text-center"></i>
                             <span>บริจาคออนไลน์</span>
                         </button>
@@ -87,7 +126,7 @@
                     </div>
                 </div>
                 
-                <hr class="my-6 border-gray-700">
+                <hr class="my-6 border-gray-700/50">
 
                 <!-- Staff Section (Hidden by default) -->
                 <div id="staff-menu" class="hidden">
@@ -113,23 +152,52 @@
         <!-- Main Content -->
         <div class="flex-1 p-4 md:p-10 overflow-y-auto">
              <header class="relative text-center mb-8">
-                <button id="menu-btn" class="absolute top-0 left-0 md:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 z-20">
+                <button id="menu-btn" class="absolute top-0 left-0 md:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 z-20">
                     <i class="fas fa-bars text-2xl"></i>
                 </button>
                 <h1 class="header-title text-3xl md:text-4xl font-bold">ระบบจัดการบุญ</h1>
                 <p class="header-subtitle mt-2">บริหารจัดการข้อมูลการบริจาคและออกใบลดหย่อนภาษี</p>
             </header>
             <main>
+                 <!-- Home Section -->
+                 <div id="home" class="tab-content active">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Main total amount display -->
+                        <div class="lg:col-span-2 home-total-card text-white rounded-xl shadow-2xl p-8 flex flex-col justify-center items-center">
+                            <h2 class="text-3xl font-semibold opacity-80">ยอดบริจาครวมทั้งหมด</h2>
+                            <p id="home-total-amount" class="text-7xl xl:text-8xl font-bold my-4 tracking-tight">฿ 0.00</p>
+                            <p class="opacity-80">ขออนุโมทนาบุญกับทุกท่าน</p>
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 w-full max-w-md">
+                                <button id="home-donate-btn" class="bg-green-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-green-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
+                                    <i class="fas fa-donate"></i>
+                                    <span>ร่วมทำบุญบริจาค</span>
+                                </button>
+                                 <button id="home-receipt-btn" class="bg-blue-500 text-white font-bold py-4 px-6 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center space-x-3 text-xl">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span>ขอใบลดหย่อนภาษี</span>
+                                </button>
+                            </div>
+                        </div>
+        
+                        <!-- Recent donations list -->
+                        <div class="glass rounded-xl shadow-lg p-6 flex flex-col">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">รายการล่าสุด</h3>
+                            <div id="recent-donations-list" class="space-y-3 flex-grow max-h-[70vh] overflow-y-auto">
+                                <p class="text-center text-gray-500">กำลังโหลดข้อมูล...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Section 1: Online Donation -->
-                <div id="donate" class="tab-content active">
-                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                <div id="donate" class="tab-content">
+                     <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-donate text-indigo-600"></i>
                             <span>ระบบบริจาคออนไลน์</span>
                         </h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                              <!-- QR Code Section -->
-                            <div class="flex flex-col items-center justify-center bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300">
+                            <div class="flex flex-col items-center justify-center p-6 rounded-lg">
                                 <h3 class="text-xl font-semibold mb-4 text-gray-700">สแกน QR Code เพื่อบริจาค</h3>
                                 <img src="https://img2.pic.in.th/pic/099400240646898.png" alt="QR Code for Donation" class="w-64 h-64 object-contain rounded-md shadow-lg">
                                 <p class="mt-4 text-center text-gray-700">ใช้แอปพลิเคชันธนาคารบนมือถือของคุณ<br>เพื่อสแกนและทำการบริจาค</p>
@@ -177,7 +245,7 @@
 
                 <!-- Section 2: Record Donation -->
                 <div id="record" class="tab-content">
-                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                     <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-edit text-indigo-600"></i>
                             <span>ระบบบันทึกบริจาค (สำหรับเจ้าหน้าที่)</span>
@@ -278,7 +346,7 @@
 
                 <!-- Section 3: Request Tax Receipt -->
                 <div id="request-receipt" class="tab-content">
-                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                     <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-file-invoice-dollar text-indigo-600"></i>
                             <span>ระบบขอใบลดหย่อนภาษี</span>
@@ -352,7 +420,7 @@
 
                 <!-- Section 4: Dashboard -->
                 <div id="dashboard" class="tab-content">
-                     <div class="card p-6 md:p-8 rounded-lg shadow-lg">
+                     <div class="card glass p-6 md:p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold border-b-2 pb-4 mb-8 flex items-center space-x-3">
                             <i class="fas fa-chart-pie text-indigo-600"></i>
                             <span>สรุปผล Dashboard</span>
@@ -493,7 +561,7 @@
 
                 <!-- Section 5: Announcer -->
                 <div id="announcer" class="tab-content">
-                    <div class="card p-8 rounded-lg shadow-lg">
+                    <div class="card glass p-8 rounded-lg shadow-lg">
                         <h2 class="card-title text-xl md:text-2xl font-bold mb-6 border-b-2 pb-4 flex items-center space-x-3">
                             <i class="fas fa-bullhorn text-indigo-600"></i>
                             <span>หน้าจอสำหรับผู้ประกาศ</span>
@@ -645,787 +713,833 @@
     </div>
 
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, serverTimestamp, updateDoc, query, orderBy, where, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const firebaseConfig = {
+                apiKey: "AIzaSyB4K1Th2ApaDTZmXjhkAtPZtI4ZlFUCATU",
+                authDomain: "e-donation-9f35d.firebaseapp.com",
+                projectId: "e-donation-9f35d",
+                storageBucket: "e-donation-9f35d.appspot.com",
+                messagingSenderId: "694136323923",
+                appId: "1:694136323923:web:aa3f3ca0a6bb1f03ffaba6",
+                measurementId: "G-9FW0EN52S1"
+            };
 
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyB4K1Th2ApaDTZmXjhkAtPZtI4ZlFUCATU",
-            authDomain: "e-donation-9f35d.firebaseapp.com",
-            projectId: "e-donation-9f35d",
-            storageBucket: "e-donation-9f35d.appspot.com",
-            messagingSenderId: "694136323923",
-            appId: "1:694136323923:web:aa3f3ca0a6bb1f03ffaba6",
-            measurementId: "G-9FW0EN52S1"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // --- Thai Baht Text Function ---
-        function ThaiBaht(number) {
-            let bahttext = "";
-            if (isNaN(number) || number === null) {
-                return "";
-            }
-            
-            number = parseFloat(number);
-            if (number === 0) {
-                return "ศูนย์บาทถ้วน";
-            }
-
-            let num = Math.floor(number);
-            let satang = Math.round((number - num) * 100);
-
-            let t = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
-            let n = ["", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
-
-            let s = num.toString();
-            let s_len = s.length;
-
-            let s_rev = s.split('').reverse().join('');
-            for (let i = 0; i < s_len; i++) {
-                let digit = s_rev[i];
-                if (digit !== '0') {
-                    let unit = t[i];
-                    let digitText = n[parseInt(digit)];
-
-                    if (i % 6 === 1 && digit === '2') { 
-                        digitText = "ยี่";
-                    } else if (i % 6 === 1 && digit === '1') { 
-                        digitText = "";
-                    } else if (i === 0 && digit === '1' && s.length > 1) { 
-                        digitText = "เอ็ด";
-                    } else if (i % 6 === 0 && i >= 6) {
-                        unit = "ล้าน";
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+            const auth = firebase.auth();
+        
+            // --- Thai Baht Text Function ---
+            function ThaiBaht(number) {
+                let bahttext = "";
+                if (isNaN(number) || number === null) {
+                    return "";
+                }
+                
+                number = parseFloat(number);
+                if (number === 0) {
+                    return "ศูนย์บาทถ้วน";
+                }
+    
+                let num = Math.floor(number);
+                let satang = Math.round((number - num) * 100);
+    
+                let t = ["", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน"];
+                let n = ["", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
+    
+                let s = num.toString();
+                let s_len = s.length;
+    
+                let s_rev = s.split('').reverse().join('');
+                for (let i = 0; i < s_len; i++) {
+                    let digit = s_rev[i];
+                    if (digit !== '0') {
+                        let unit = t[i];
+                        let digitText = n[parseInt(digit)];
+    
+                        if (i % 6 === 1 && digit === '2') { 
+                            digitText = "ยี่";
+                        } else if (i % 6 === 1 && digit === '1') { 
+                            digitText = "";
+                        } else if (i === 0 && digit === '1' && s.length > 1) { 
+                            digitText = "เอ็ด";
+                        } else if (i % 6 === 0 && i >= 6) {
+                            unit = "ล้าน";
+                        }
+                        bahttext = digitText + unit + bahttext;
                     }
-                    bahttext = digitText + unit + bahttext;
                 }
+                
+                bahttext += "บาท";
+    
+                if (satang > 0) {
+                    let satangStr = satang.toString().padStart(2, '0');
+                    let s1 = satangStr[0];
+                    let s2 = satangStr[1];
+    
+                    if (s1 !== '0') {
+                        bahttext += (s1 === '2' ? 'ยี่' : (s1 === '1' ? '' : n[parseInt(s1)])) + 'สิบ';
+                    }
+                    if (s2 !== '0') {
+                        bahttext += (s2 === '1' && s1 !== '0' ? 'เอ็ด' : n[parseInt(s2)]);
+                    }
+                    bahttext += 'สตางค์';
+                } else {
+                    bahttext += "ถ้วน";
+                }
+                return bahttext;
             }
+    
+            // --- DOM Elements ---
+            const tabs = document.querySelectorAll('.nav-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginModal = document.getElementById('login-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const loginForm = document.getElementById('login-form');
+            const loginError = document.getElementById('login-error');
+            const staffMenu = document.getElementById('staff-menu');
             
-            bahttext += "บาท";
-
-            if (satang > 0) {
-                let satangStr = satang.toString().padStart(2, '0');
-                let s1 = satangStr[0];
-                let s2 = satangStr[1];
-
-                if (s1 !== '0') {
-                    bahttext += (s1 === '2' ? 'ยี่' : (s1 === '1' ? '' : n[parseInt(s1)])) + 'สิบ';
+            const editModal = document.getElementById('edit-modal');
+            const editForm = document.getElementById('edit-form');
+            const editModalCloseBtn = document.getElementById('edit-modal-close');
+            
+            // --- State Management ---
+            let isLoggedIn = false;
+    
+            // --- Auth State Logic ---
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    if (!isLoggedIn) { // To avoid re-initializing everything on hot-reload
+                        staffMenu.classList.remove('hidden');
+                        loginBtn.classList.add('hidden');
+                        logoutBtn.classList.remove('hidden');
+                        loginModal.classList.add('hidden');
+                        loadDashboardData();
+                    }
+                    isLoggedIn = true;
+                } else {
+                    if (isLoggedIn) { // Only run unsubscribe if the state changes from logged-in to logged-out
+                       unsubscribeAllListeners();
+                    }
+                    isLoggedIn = false;
+                    staffMenu.classList.add('hidden');
+                    loginBtn.classList.remove('hidden');
+                    logoutBtn.classList.add('hidden');
+                    tabs.forEach(item => item.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.querySelector('.nav-link[data-tab="home"]').classList.add('active');
+                    document.getElementById('home').classList.add('active');
                 }
-                if (s2 !== '0') {
-                    bahttext += (s2 === '1' && s1 !== '0' ? 'เอ็ด' : n[parseInt(s2)]);
-                }
-                bahttext += 'สตางค์';
-            } else {
-                bahttext += "ถ้วน";
-            }
-            return bahttext;
-        }
-
-        // --- DOM Elements ---
-        const tabs = document.querySelectorAll('.nav-link');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const loginBtn = document.getElementById('login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const loginModal = document.getElementById('login-modal');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
-        const staffMenu = document.getElementById('staff-menu');
-        const clockElement = document.getElementById('clock');
-        
-        const editModal = document.getElementById('edit-modal');
-        const editForm = document.getElementById('edit-form');
-        const editModalCloseBtn = document.getElementById('edit-modal-close');
-        
-        // --- Clock Logic ---
-        function updateClock() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            if (clockElement) {
-                clockElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-            }
-        }
-
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // --- Auth State Logic ---
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                staffMenu.classList.remove('hidden');
-                loginBtn.classList.add('hidden');
-                logoutBtn.classList.remove('hidden');
+            });
+            
+            // --- Login/Logout UI Logic ---
+            loginBtn.addEventListener('click', () => loginModal.classList.remove('hidden'));
+            closeModalBtn.addEventListener('click', () => {
                 loginModal.classList.add('hidden');
-                loadDashboardData();
-            } else {
-                staffMenu.classList.add('hidden');
-                loginBtn.classList.remove('hidden');
-                logoutBtn.classList.add('hidden');
-                unsubscribeAllListeners();
-                tabs.forEach(item => item.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-                document.querySelector('.nav-link[data-tab="donate"]').classList.add('active');
-                document.getElementById('donate').classList.add('active');
-            }
-        });
-        
-        // --- Login/Logout UI Logic ---
-        loginBtn.addEventListener('click', () => loginModal.classList.remove('hidden'));
-        closeModalBtn.addEventListener('click', () => {
-            loginModal.classList.add('hidden');
-            loginError.classList.add('hidden');
-        });
-        logoutBtn.addEventListener('click', () => signOut(auth));
-        
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = "admin@test.com";
-            const password = document.getElementById('password').value;
-            loginError.classList.add('hidden');
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                document.getElementById('password').value = ''; 
-            } catch (error) {
-                console.error("Login failed:", error.code);
-                loginError.textContent = "รหัสไม่ถูกต้อง";
-                loginError.classList.remove('hidden');
-            }
-        });
-
-        // --- Tab Navigation Logic ---
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                if (tab.closest('#staff-menu') && !auth.currentUser) {
-                    Swal.fire({
-                        title: 'โปรดทราบ',
-                        text: 'กรุณา Login สำหรับเจ้าหน้าที่ก่อน',
-                        icon: 'info'
-                    });
-                    return;
+                loginError.classList.add('hidden');
+            });
+            logoutBtn.addEventListener('click', () => auth.signOut());
+            
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = "admin@test.com";
+                const password = document.getElementById('password').value;
+                loginError.classList.add('hidden');
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    document.getElementById('password').value = ''; 
+                } catch (error) {
+                    console.error("Login failed:", error.code);
+                    loginError.textContent = "รหัสไม่ถูกต้อง";
+                    loginError.classList.remove('hidden');
                 }
-                tabs.forEach(item => item.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab)?.classList.add('active');
             });
-        });
-
-        // --- Firestore Data Handling ---
-        const donateForm = document.getElementById('donate-form');
-        donateForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const typeRadio = document.querySelector('input[name="donation-type-1"]:checked');
-            let donationType = typeRadio.value === 'อื่น ๆ' ? `อื่น ๆ: ${document.getElementById('other-type-1').value}` : typeRadio.value;
-            try {
-                await addDoc(collection(db, "donations"), {
-                    name: donateForm['donor-name-1'].value,
-                    amount: Number(donateForm['amount-1'].value),
-                    type: donationType,
-                    notes: donateForm['notes-1'].value,
-                    createdAt: serverTimestamp()
+    
+            // --- Tab Navigation Logic ---
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    if (tab.closest('#staff-menu') && !auth.currentUser) {
+                        Swal.fire({
+                            title: 'โปรดทราบ',
+                            text: 'กรุณา Login สำหรับเจ้าหน้าที่ก่อน',
+                            icon: 'info'
+                        });
+                        return;
+                    }
+                    tabs.forEach(item => item.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab)?.classList.add('active');
                 });
-                Swal.fire({
-                    title: 'สำเร็จ!',
-                    text: 'ส่งข้อมูลการบริจาคสำเร็จ ขอบคุณครับ',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                donateForm.reset();
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล',
-                    icon: 'error'
-                });
-            }
-        });
-
-        const recordForm = document.getElementById('record-form');
-        recordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const typeRadio = document.querySelector('input[name="donation-type-2"]:checked');
-            let donationType = typeRadio.value === 'อื่น ๆ' ? `อื่น ๆ: ${document.getElementById('other-type-2').value}` : typeRadio.value;
-            const receiptStatus = document.querySelector('input[name="receipt-request"]:checked').value === 'yes' ? 'รอดำเนินการ' : 'ไม่ต้องการ';
-            try {
-                await addDoc(collection(db, "recorded_donations"), {
-                    donorType: recordForm['donor-type-2'].value,
-                    idNumber: recordForm['id-number-2'].value,
-                    orgName: recordForm['org-name-2'].value,
-                    phone: recordForm['phone-2'].value,
-                    notes: recordForm['notes-2'].value,
-                    donationType: donationType,
-                    amount: Number(recordForm['amount-2'].value),
-                    purpose: recordForm['purpose-2'].value,
-                    receiptStatus: receiptStatus,
-                    createdAt: serverTimestamp()
-                });
-                Swal.fire({
-                    title: 'สำเร็จ!',
-                    text: 'บันทึกข้อมูลการบริจาคสำเร็จ',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                recordForm.reset();
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล',
-                    icon: 'error'
-                });
-            }
-        });
-        
-        const requestReceiptForm = document.getElementById('request-receipt-form');
-        requestReceiptForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const typeRadio = document.querySelector('input[name="donation-type-3"]:checked');
-            let donationType = typeRadio.value === 'อื่น ๆ' ? `อื่น ๆ: ${document.getElementById('other-type-3').value}` : typeRadio.value;
-            try {
-                await addDoc(collection(db, "tax_receipt_requests"), {
-                    taxId: requestReceiptForm['tax-id-3'].value,
-                    fullName: requestReceiptForm['fullname-3'].value,
-                    phone: requestReceiptForm['phone-3'].value,
-                    donationType: donationType,
-                    amount: Number(requestReceiptForm['amount-3'].value),
-                    notes: requestReceiptForm['notes-3'].value,
-                    createdAt: serverTimestamp()
-                });
-                Swal.fire({
-                    title: 'สำเร็จ!',
-                    text: 'ยื่นคำขอใบลดหย่อนภาษีสำเร็จ',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-                requestReceiptForm.reset();
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                Swal.fire({
-                    title: 'ผิดพลาด!',
-                    text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล',
-                    icon: 'error'
-                });
-            }
-        });
-
-        // --- Dashboard Data Loading & Filtering ---
-        let unsubscribeRecorded = null, unsubscribeOnline = null, unsubscribeRequests = null, unsubscribeAnnouncer = null, unsubscribeOnlineAnnouncer = null;
-        let allDocsData = {}; // Cache for editing
-        let allRecordedData = [], allOnlineData = [], allRequestData = [], allAnnouncerData = [];
-
-        function unsubscribeAllListeners() {
-            if (unsubscribeRecorded) unsubscribeRecorded();
-            if (unsubscribeOnline) unsubscribeOnline();
-            if (unsubscribeRequests) unsubscribeRequests();
-            if (unsubscribeAnnouncer) unsubscribeAnnouncer();
-            if (unsubscribeOnlineAnnouncer) unsubscribeOnlineAnnouncer();
-        }
-
-        function loadDashboardData() {
-            unsubscribeAllListeners();
-            const datePickerOnChange = () => {
-                renderRecordedTable();
-                renderOnlineTable();
-                renderRequestsTable();
-            };
-
-            const fpConfig = { dateFormat: "Y-m-d", onChange: datePickerOnChange };
-            flatpickr("#start-date-recorded", fpConfig);
-            flatpickr("#end-date-recorded", fpConfig);
-            flatpickr("#start-date-online", fpConfig);
-            flatpickr("#end-date-online", fpConfig);
-            flatpickr("#start-date-requests", fpConfig);
-            flatpickr("#end-date-requests", fpConfig);
-
-            const recordedRef = query(collection(db, "recorded_donations"), orderBy("createdAt", "desc"));
-            unsubscribeRecorded = onSnapshot(recordedRef, (snapshot) => {
-                allRecordedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                allDocsData = allRecordedData.reduce((acc, doc) => ({...acc, [doc.id]: doc }), {});
-                renderRecordedTable();
-            }, console.error);
-
-            const onlineRef = query(collection(db, "donations"), orderBy("createdAt", "desc"));
-            unsubscribeOnline = onSnapshot(onlineRef, (snapshot) => {
-                allOnlineData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderOnlineTable();
-            }, console.error);
-
-            const requestsRef = query(collection(db, "tax_receipt_requests"), orderBy("createdAt", "desc"));
-            unsubscribeRequests = onSnapshot(requestsRef, (snapshot) => {
-                allRequestData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderRequestsTable();
-            }, console.error);
-
-            const announcerRecordedRef = query(collection(db, "recorded_donations"), orderBy("createdAt", "asc"));
-            const announcerOnlineRef = query(collection(db, "donations"), orderBy("createdAt", "asc"));
-
-            let recordedAnnouncerData = [];
-            let onlineAnnouncerData = [];
-
-            const mergeAndRenderAnnouncer = () => {
-                const combined = [...recordedAnnouncerData, ...onlineAnnouncerData];
-                combined.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds);
-                allAnnouncerData = combined;
-                renderAnnouncerView();
-            };
-
-            unsubscribeAnnouncer = onSnapshot(announcerRecordedRef, (snapshot) => {
-                recordedAnnouncerData = snapshot.docs.map(doc => ({ id: doc.id, collection: 'recorded_donations', name: doc.data().orgName, ...doc.data() }));
-                mergeAndRenderAnnouncer();
-            }, console.error);
+            });
             
-            unsubscribeOnlineAnnouncer = onSnapshot(announcerOnlineRef, (snapshot) => {
-                 onlineAnnouncerData = snapshot.docs.map(doc => ({ id: doc.id, collection: 'donations', orgName: doc.data().name, donationType: doc.data().type, ...doc.data() }));
-                 mergeAndRenderAnnouncer();
-            }, console.error);
-        }
-
-        function filterDataByDate(data, startDate, endDate) {
-            if (endDate) endDate.setHours(23, 59, 59, 999);
-            return data.filter(item => {
-                const itemDate = item.createdAt?.toDate();
-                if (!itemDate) return false;
-                const startMatch = startDate ? itemDate >= startDate : true;
-                const endMatch = endDate ? itemDate <= endDate : true;
-                return startMatch && endMatch;
+            document.getElementById('home-donate-btn').addEventListener('click', () => {
+                document.querySelector('.nav-link[data-tab="donate"]').click();
             });
-        }
-
-        function renderRecordedTable() {
-            const startDate = document.getElementById('start-date-recorded')._flatpickr.selectedDates[0];
-            const endDate = document.getElementById('end-date-recorded')._flatpickr.selectedDates[0];
-            const filteredData = filterDataByDate(allRecordedData, startDate, endDate);
-            const tableBody = document.getElementById('dashboard-table-recorded-body');
+            document.getElementById('home-receipt-btn').addEventListener('click', () => {
+                document.querySelector('.nav-link[data-tab="request-receipt"]').click();
+            });
+    
+            // --- Firestore Data Handling ---
+            const donateForm = document.getElementById('donate-form');
+            donateForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const typeRadio = document.querySelector('input[name="donation-type-1"]:checked');
+                let donationType = typeRadio.value === 'อื่น ๆ' ? `อื่น ๆ: ${document.getElementById('other-type-1').value}` : typeRadio.value;
+                try {
+                    await db.collection("donations").add({
+                        name: donateForm['donor-name-1'].value,
+                        amount: Number(donateForm['amount-1'].value),
+                        type: donationType,
+                        notes: donateForm['notes-1'].value,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    Swal.fire({
+                        title: 'สำเร็จ!',
+                        text: 'ส่งข้อมูลการบริจาคสำเร็จ ขอบคุณครับ',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    donateForm.reset();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    Swal.fire({
+                        title: 'ผิดพลาด!',
+                        text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล',
+                        icon: 'error'
+                    });
+                }
+            });
+    
+            const recordForm = document.getElementById('record-form');
+            recordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const typeRadio = document.querySelector('input[name="donation-type-2"]:checked');
+                let donationType = typeRadio.value === 'อื่น ๆ' ? `อื่น ๆ: ${document.getElementById('other-type-2').value}` : typeRadio.value;
+                const receiptStatus = document.querySelector('input[name="receipt-request"]:checked').value === 'yes' ? 'รอดำเนินการ' : 'ไม่ต้องการ';
+                try {
+                    await db.collection("recorded_donations").add({
+                        donorType: recordForm['donor-type-2'].value,
+                        idNumber: recordForm['id-number-2'].value,
+                        orgName: recordForm['org-name-2'].value,
+                        phone: recordForm['phone-2'].value,
+                        notes: recordForm['notes-2'].value,
+                        donationType: donationType,
+                        amount: Number(recordForm['amount-2'].value),
+                        purpose: recordForm['purpose-2'].value,
+                        receiptStatus: receiptStatus,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    Swal.fire({
+                        title: 'สำเร็จ!',
+                        text: 'บันทึกข้อมูลการบริจาคสำเร็จ',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    recordForm.reset();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    Swal.fire({
+                        title: 'ผิดพลาด!',
+                        text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล',
+                        icon: 'error'
+                    });
+                }
+            });
             
-            tableBody.innerHTML = '';
-            let totalAmount = 0, pendingReceipts = 0;
-
-            if (filteredData.length === 0) {
-                 tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
-            } else {
-                filteredData.forEach(data => {
-                    tableBody.innerHTML += `
-                        <tr class="hover-row" data-id="${data.id}">
-                            <td class="py-3 px-4">${data.orgName}</td>
-                            <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
-                            <td class="py-3 px-4">${data.donationType}</td>
-                            <td class="py-3 px-4">${data.purpose}</td>
-                            <td class="py-3 px-4">${renderStatusBadge(data.receiptStatus)}</td>
-                            <td class="py-3 px-4 text-center space-x-4">
-                                <button class="text-indigo-600 hover:text-indigo-800 edit-btn" title="แก้ไข"><i class="fas fa-edit"></i></button>
-                                <button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="recorded_donations"><i class="fas fa-trash-alt"></i></button>
-                            </td>
-                        </tr>`;
-                });
-            }
-             // Update global stats based on unfiltered data
-            allRecordedData.forEach(data => {
-                totalAmount += data.amount || 0;
-                if (data.receiptStatus === 'รอดำเนินการ') pendingReceipts++;
+            const requestReceiptForm = document.getElementById('request-receipt-form');
+            requestReceiptForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const typeRadio = document.querySelector('input[name="donation-type-3"]:checked');
+                let donationType = typeRadio.value === 'อื่น ๆ' ? `อื่น ๆ: ${document.getElementById('other-type-3').value}` : typeRadio.value;
+                try {
+                    await db.collection("tax_receipt_requests").add({
+                        taxId: requestReceiptForm['tax-id-3'].value,
+                        fullName: requestReceiptForm['fullname-3'].value,
+                        phone: requestReceiptForm['phone-3'].value,
+                        donationType: donationType,
+                        amount: Number(requestReceiptForm['amount-3'].value),
+                        notes: requestReceiptForm['notes-3'].value,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    Swal.fire({
+                        title: 'สำเร็จ!',
+                        text: 'ยื่นคำขอใบลดหย่อนภาษีสำเร็จ',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    requestReceiptForm.reset();
+                } catch (error) {
+                    console.error("Error adding document: ", error);
+                    Swal.fire({
+                        title: 'ผิดพลาด!',
+                        text: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล',
+                        icon: 'error'
+                    });
+                }
             });
-            document.getElementById('total-donation-amount').textContent = `฿ ${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            document.getElementById('total-donors').textContent = `${allRecordedData.length} คน`;
-            document.getElementById('pending-receipts').textContent = `${pendingReceipts} รายการ`;
-        }
-
-        function renderOnlineTable() {
-            const startDate = document.getElementById('start-date-online')._flatpickr.selectedDates[0];
-            const endDate = document.getElementById('end-date-online')._flatpickr.selectedDates[0];
-            const filteredData = filterDataByDate(allOnlineData, startDate, endDate);
-            const tableBody = document.getElementById('dashboard-table-online-body');
-            tableBody.innerHTML = '';
-
-            if (filteredData.length === 0) {
-                 tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
-            } else {
-                 filteredData.forEach(data => {
-                     tableBody.innerHTML += `
-                        <tr class="hover-row" data-id="${data.id}">
-                            <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
-                            <td class="py-3 px-4">${data.name}</td>
-                            <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
-                            <td class="py-3 px-4">${data.type}</td>
-                            <td class="py-3 px-4">${data.notes || ''}</td>
-                            <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="donations"><i class="fas fa-trash-alt"></i></button></td>
-                        </tr>`;
-                 });
+    
+            // --- Dashboard Data Loading & Filtering ---
+            let unsubscribeRecorded = null, unsubscribeOnline = null, unsubscribeRequests = null, unsubscribeAnnouncer = null, unsubscribeOnlineAnnouncer = null;
+            let allDocsData = {}; // Cache for editing
+            let allRecordedData = [], allOnlineData = [], allRequestData = [], allAnnouncerData = [];
+    
+            function unsubscribeAllListeners() {
+                if (unsubscribeRecorded) unsubscribeRecorded();
+                if (unsubscribeOnline) unsubscribeOnline();
+                if (unsubscribeRequests) unsubscribeRequests();
+                if (unsubscribeAnnouncer) unsubscribeAnnouncer();
+                if (unsubscribeOnlineAnnouncer) unsubscribeOnlineAnnouncer();
             }
-        }
-
-        function renderRequestsTable() {
-            const startDate = document.getElementById('start-date-requests')._flatpickr.selectedDates[0];
-            const endDate = document.getElementById('end-date-requests')._flatpickr.selectedDates[0];
-            const filteredData = filterDataByDate(allRequestData, startDate, endDate);
-            const tableBody = document.getElementById('dashboard-table-requests-body');
-            tableBody.innerHTML = '';
-            document.getElementById('total-receipt-requests').textContent = `${allRequestData.length} รายการ`;
-
-            if (filteredData.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
-            } else {
-                filteredData.forEach(data => {
-                    tableBody.innerHTML += `
-                         <tr class="hover-row" data-id="${data.id}">
-                            <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
-                            <td class="py-3 px-4">${data.taxId}</td>
-                            <td class="py-3 px-4">${data.fullName}</td>
-                            <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
-                            <td class="py-3 px-4">${data.donationType}</td>
-                            <td class="py-3 px-4">${data.phone}</td>
-                            <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="tax_receipt_requests"><i class="fas fa-trash-alt"></i></button></td>
-                        </tr>`;
+    
+            function loadDashboardData() {
+                unsubscribeAllListeners();
+                const datePickerOnChange = () => {
+                    renderRecordedTable();
+                    renderOnlineTable();
+                    renderRequestsTable();
+                };
+    
+                const fpConfig = { dateFormat: "Y-m-d", onChange: datePickerOnChange };
+                flatpickr("#start-date-recorded", fpConfig);
+                flatpickr("#end-date-recorded", fpConfig);
+                flatpickr("#start-date-online", fpConfig);
+                flatpickr("#end-date-online", fpConfig);
+                flatpickr("#start-date-requests", fpConfig);
+                flatpickr("#end-date-requests", fpConfig);
+                
+                const mergeAndRender = () => {
+                    const combined = [...allRecordedData, ...allOnlineData];
+                    renderHomePage(combined);
+                };
+    
+                const recordedRef = db.collection("recorded_donations").orderBy("createdAt", "desc");
+                unsubscribeRecorded = recordedRef.onSnapshot((snapshot) => {
+                    allRecordedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    allDocsData = allRecordedData.reduce((acc, doc) => ({...acc, [doc.id]: doc }), {});
+                    renderRecordedTable();
+                    mergeAndRender();
+                }, console.error);
+    
+                const onlineRef = db.collection("donations").orderBy("createdAt", "desc");
+                unsubscribeOnline = onlineRef.onSnapshot((snapshot) => {
+                    allOnlineData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderOnlineTable();
+                    mergeAndRender();
+                }, console.error);
+    
+                const requestsRef = db.collection("tax_receipt_requests").orderBy("createdAt", "desc");
+                unsubscribeRequests = requestsRef.onSnapshot((snapshot) => {
+                    allRequestData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderRequestsTable();
+                }, console.error);
+    
+                const announcerRecordedRef = db.collection("recorded_donations").orderBy("createdAt", "asc");
+                const announcerOnlineRef = db.collection("donations").orderBy("createdAt", "asc");
+    
+                let recordedAnnouncerData = [];
+                let onlineAnnouncerData = [];
+    
+                const mergeAndRenderAnnouncer = () => {
+                    const combined = [...recordedAnnouncerData, ...onlineAnnouncerData];
+                    combined.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds);
+                    allAnnouncerData = combined;
+                    renderAnnouncerView();
+                };
+    
+                unsubscribeAnnouncer = announcerRecordedRef.onSnapshot((snapshot) => {
+                    recordedAnnouncerData = snapshot.docs.map(doc => ({ id: doc.id, collection: 'recorded_donations', name: doc.data().orgName, ...doc.data() }));
+                    mergeAndRenderAnnouncer();
+                }, console.error);
+                
+                unsubscribeOnlineAnnouncer = announcerOnlineRef.onSnapshot((snapshot) => {
+                     onlineAnnouncerData = snapshot.docs.map(doc => ({ id: doc.id, collection: 'donations', orgName: doc.data().name, donationType: doc.data().type, ...doc.data() }));
+                     mergeAndRenderAnnouncer();
+                }, console.error);
+            }
+    
+            function filterDataByDate(data, startDate, endDate) {
+                if (endDate) endDate.setHours(23, 59, 59, 999);
+                return data.filter(item => {
+                    const itemDate = item.createdAt?.toDate();
+                    if (!itemDate) return false;
+                    const startMatch = startDate ? itemDate >= startDate : true;
+                    const endMatch = endDate ? itemDate <= endDate : true;
+                    return startMatch && endMatch;
                 });
             }
-        }
-
-        function renderAnnouncerView() {
-            const unannounced = allAnnouncerData.filter(d => !d.announced);
-            const announced = allAnnouncerData.filter(d => d.announced);
-
-            const currentCardContainer = document.getElementById('current-announcement-card');
-            const announcedListContainer = document.getElementById('announced-list');
-
-            // Render current announcement
-            if (unannounced.length > 0) {
-                const current = unannounced[0];
-                 currentCardContainer.innerHTML = `
-                    <div class="text-left w-full space-y-4" data-id="${current.id}" data-collection="${current.collection}">
-                        <div>
-                            <p class="text-2xl text-gray-600">ผู้บริจาค:</p>
-                            <p class="text-5xl font-bold text-indigo-700" style="word-break: break-word;">${current.orgName || current.name}</p>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
+            
+            let homeCountUp; 
+    
+            function renderHomePage(combinedData) {
+                const totalAmount = combinedData.reduce((sum, item) => sum + (item.amount || 0), 0);
+                const homeTotalAmountEl = document.getElementById('home-total-amount');
+    
+                if (!homeCountUp) {
+                    homeCountUp = new CountUp(homeTotalAmountEl, totalAmount, {
+                        prefix: '฿ ',
+                        decimalPlaces: 2,
+                        duration: 2.5,
+                        separator: ',',
+                    });
+                    if (!homeCountUp.error) {
+                        homeCountUp.start();
+                    } else {
+                        console.error(homeCountUp.error);
+                        homeTotalAmountEl.textContent = `฿ ${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    }
+                } else {
+                    homeCountUp.update(totalAmount);
+                }
+    
+                const recentDonations = combinedData.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds).slice(0, 5);
+                const recentList = document.getElementById('recent-donations-list');
+                recentList.innerHTML = '';
+                if(recentDonations.length > 0) {
+                    recentDonations.forEach(item => {
+                        recentList.innerHTML += `
+                            <div class="bg-gray-50 p-4 rounded-lg flex justify-between items-center transition-all duration-300 hover:bg-indigo-50">
+                                <div>
+                                    <p class="font-bold text-gray-800 text-lg">${item.orgName || item.name}</p>
+                                    <p class="text-sm text-gray-500">${formatFirebaseTimestamp(item.createdAt)}</p>
+                                </div>
+                                <span class="font-bold text-green-600 text-xl">${(item.amount || 0).toLocaleString('th-TH')} ฿</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    recentList.innerHTML = '<p class="text-center text-gray-500">ยังไม่มีรายการบริจาค</p>';
+                }
+            }
+    
+            function renderRecordedTable() {
+                const startDate = document.getElementById('start-date-recorded')._flatpickr.selectedDates[0];
+                const endDate = document.getElementById('end-date-recorded')._flatpickr.selectedDates[0];
+                const filteredData = filterDataByDate(allRecordedData, startDate, endDate);
+                const tableBody = document.getElementById('dashboard-table-recorded-body');
+                
+                tableBody.innerHTML = '';
+                let totalAmount = 0, pendingReceipts = 0;
+    
+                if (filteredData.length === 0) {
+                     tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
+                } else {
+                    filteredData.forEach(data => {
+                        tableBody.innerHTML += `
+                            <tr class="hover-row" data-id="${data.id}">
+                                <td class="py-3 px-4">${data.orgName}</td>
+                                <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
+                                <td class="py-3 px-4">${data.donationType}</td>
+                                <td class="py-3 px-4">${data.purpose}</td>
+                                <td class="py-3 px-4">${renderStatusBadge(data.receiptStatus)}</td>
+                                <td class="py-3 px-4 text-center space-x-4">
+                                    <button class="text-indigo-600 hover:text-indigo-800 edit-btn" title="แก้ไข"><i class="fas fa-edit"></i></button>
+                                    <button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="recorded_donations"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>`;
+                    });
+                }
+                 // Update global stats based on unfiltered data
+                allRecordedData.forEach(data => {
+                    totalAmount += data.amount || 0;
+                    if (data.receiptStatus === 'รอดำเนินการ') pendingReceipts++;
+                });
+                document.getElementById('total-donation-amount').textContent = `฿ ${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                document.getElementById('total-donors').textContent = `${allRecordedData.length} คน`;
+                document.getElementById('pending-receipts').textContent = `${pendingReceipts} รายการ`;
+            }
+    
+            function renderOnlineTable() {
+                const startDate = document.getElementById('start-date-online')._flatpickr.selectedDates[0];
+                const endDate = document.getElementById('end-date-online')._flatpickr.selectedDates[0];
+                const filteredData = filterDataByDate(allOnlineData, startDate, endDate);
+                const tableBody = document.getElementById('dashboard-table-online-body');
+                tableBody.innerHTML = '';
+    
+                if (filteredData.length === 0) {
+                     tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
+                } else {
+                     filteredData.forEach(data => {
+                         tableBody.innerHTML += `
+                            <tr class="hover-row" data-id="${data.id}">
+                                <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
+                                <td class="py-3 px-4">${data.name}</td>
+                                <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
+                                <td class="py-3 px-4">${data.type}</td>
+                                <td class="py-3 px-4">${data.notes || ''}</td>
+                                <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="donations"><i class="fas fa-trash-alt"></i></button></td>
+                            </tr>`;
+                     });
+                }
+            }
+    
+            function renderRequestsTable() {
+                const startDate = document.getElementById('start-date-requests')._flatpickr.selectedDates[0];
+                const endDate = document.getElementById('end-date-requests')._flatpickr.selectedDates[0];
+                const filteredData = filterDataByDate(allRequestData, startDate, endDate);
+                const tableBody = document.getElementById('dashboard-table-requests-body');
+                tableBody.innerHTML = '';
+                document.getElementById('total-receipt-requests').textContent = `${allRequestData.length} รายการ`;
+    
+                if (filteredData.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก</td></tr>';
+                } else {
+                    filteredData.forEach(data => {
+                        tableBody.innerHTML += `
+                             <tr class="hover-row" data-id="${data.id}">
+                                <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
+                                <td class="py-3 px-4">${data.taxId}</td>
+                                <td class="py-3 px-4">${data.fullName}</td>
+                                <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
+                                <td class="py-3 px-4">${data.donationType}</td>
+                                <td class="py-3 px-4">${data.phone}</td>
+                                <td class="py-3 px-4 text-center"><button class="text-red-600 hover:text-red-800 delete-btn" title="ลบ" data-collection="tax_receipt_requests"><i class="fas fa-trash-alt"></i></button></td>
+                            </tr>`;
+                    });
+                }
+            }
+    
+            function renderAnnouncerView() {
+                const unannounced = allAnnouncerData.filter(d => !d.announced);
+                const announced = allAnnouncerData.filter(d => d.announced);
+    
+                const currentCardContainer = document.getElementById('current-announcement-card');
+                const announcedListContainer = document.getElementById('announced-list');
+    
+                // Render current announcement
+                if (unannounced.length > 0) {
+                    const current = unannounced[0];
+                     currentCardContainer.innerHTML = `
+                        <div class="text-left w-full space-y-4" data-id="${current.id}" data-collection="${current.collection}">
                             <div>
-                               <p class="text-xl text-gray-600">จำนวนเงิน:</p>
-                               <p class="text-3xl font-semibold text-green-600">${(current.amount || 0).toLocaleString('th-TH')} บาท</p>
+                                <p class="text-2xl text-gray-600">ผู้บริจาค:</p>
+                                <p class="text-5xl font-bold text-indigo-700" style="word-break: break-word;">${current.orgName || current.name}</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                   <p class="text-xl text-gray-600">จำนวนเงิน:</p>
+                                   <p class="text-3xl font-semibold text-green-600">${(current.amount || 0).toLocaleString('th-TH')} บาท</p>
+                                </div>
+                                <div>
+                                   <p class="text-xl text-gray-600">ประเภท:</p>
+                                   <p class="text-3xl font-semibold text-gray-800">${current.donationType || current.type}</p>
+                                </div>
                             </div>
                             <div>
-                               <p class="text-xl text-gray-600">ประเภท:</p>
-                               <p class="text-3xl font-semibold text-gray-800">${current.donationType || current.type}</p>
+                                <p class="text-xl text-gray-600">หมายเหตุ:</p>
+                                <p class="text-2xl text-gray-800">${current.notes || '-'}</p>
                             </div>
-                        </div>
-                        <div>
-                            <p class="text-xl text-gray-600">หมายเหตุ:</p>
-                            <p class="text-2xl text-gray-800">${current.notes || '-'}</p>
-                        </div>
-                    </div>
-                `;
-            } else {
-                currentCardContainer.innerHTML = '<p class="text-gray-500 text-2xl">ไม่มีรายการรอประกาศ</p>';
-            }
-
-            // Render announced list
-            announcedListContainer.innerHTML = '';
-            if (announced.length > 0) {
-                announced.slice().reverse().forEach(item => { // Show most recent announced first
-                    announcedListContainer.innerHTML += `
-                        <div class="bg-white p-3 rounded-md shadow-sm flex justify-between items-center">
-                            <span class="text-gray-800">${item.orgName || item.name}</span>
-                            <span class="font-semibold text-green-700">${(item.amount || 0).toLocaleString('th-TH')} ฿</span>
                         </div>
                     `;
-                });
-            } else {
-                announcedListContainer.innerHTML = '<p class="text-gray-400 text-center">ยังไม่มีรายการที่ประกาศ</p>';
+                } else {
+                    currentCardContainer.innerHTML = '<p class="text-gray-500 text-2xl">ไม่มีรายการรอประกาศ</p>';
+                }
+    
+                // Render announced list
+                announcedListContainer.innerHTML = '';
+                if (announced.length > 0) {
+                    announced.slice().reverse().forEach(item => { // Show most recent announced first
+                        announcedListContainer.innerHTML += `
+                            <div class="bg-white p-3 rounded-md shadow-sm flex justify-between items-center">
+                                <span class="text-gray-800">${item.orgName || item.name}</span>
+                                <span class="font-semibold text-green-700">${(item.amount || 0).toLocaleString('th-TH')} ฿</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    announcedListContainer.innerHTML = '<p class="text-gray-400 text-center">ยังไม่มีรายการที่ประกาศ</p>';
+                }
             }
-        }
-
-        function formatFirebaseTimestamp(timestamp) {
-            return timestamp ? new Date(timestamp.seconds * 1000).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
-        }
-        
-        // --- Dashboard Edit/Delete Logic ---
-        document.getElementById('dashboard').addEventListener('click', async (e) => {
-            const target = e.target.closest('button');
-            if (!target) return;
-
-            const row = target.closest('tr');
-            if (!row) return;
-            const id = row.dataset.id;
-
-            if (target.classList.contains('delete-btn')) {
-                const collectionName = target.dataset.collection;
-                Swal.fire({
-                    title: 'คุณแน่ใจหรือไม่?', text: `คุณต้องการลบรายการนี้ใช่หรือไม่?`, icon: 'warning',
-                    showCancelButton: true, confirmButtonColor: '#4f46e5', cancelButtonColor: '#d33',
-                    confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        try {
-                            await deleteDoc(doc(db, collectionName, id));
-                            Swal.fire('ลบแล้ว!', 'รายการของคุณถูกลบเรียบร้อยแล้ว', 'success');
-                        } catch (err) {
-                            Swal.fire('ผิดพลาด!', 'เกิดข้อผิดพลาดในการลบ', 'error');
-                            console.error(err);
+    
+            function formatFirebaseTimestamp(timestamp) {
+                return timestamp ? new Date(timestamp.seconds * 1000).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+            }
+            
+            // --- Dashboard Edit/Delete Logic ---
+            document.getElementById('dashboard').addEventListener('click', async (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
+    
+                const row = target.closest('tr');
+                if (!row) return;
+                const id = row.dataset.id;
+    
+                if (target.classList.contains('delete-btn')) {
+                    const collectionName = target.dataset.collection;
+                    Swal.fire({
+                        title: 'คุณแน่ใจหรือไม่?', text: `คุณต้องการลบรายการนี้ใช่หรือไม่?`, icon: 'warning',
+                        showCancelButton: true, confirmButtonColor: '#4f46e5', cancelButtonColor: '#d33',
+                        confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                await db.collection(collectionName).doc(id).delete();
+                                Swal.fire('ลบแล้ว!', 'รายการของคุณถูกลบเรียบร้อยแล้ว', 'success');
+                            } catch (err) {
+                                Swal.fire('ผิดพลาด!', 'เกิดข้อผิดพลาดในการลบ', 'error');
+                                console.error(err);
+                            }
                         }
+                    });
+                }
+                
+                if (target.classList.contains('edit-btn')) {
+                    const data = allDocsData[id];
+                    document.getElementById('edit-doc-id').value = id;
+                    document.getElementById('edit-donorType').value = data.donorType;
+                    document.getElementById('edit-idNumber').value = data.idNumber;
+                    document.getElementById('edit-orgName').value = data.orgName;
+                    document.getElementById('edit-phone').value = data.phone;
+                    document.getElementById('edit-notes').value = data.notes;
+                    document.getElementById('edit-amount').value = data.amount;
+                    document.getElementById('edit-donationType').value = data.donationType;
+                    document.getElementById('edit-purpose').value = data.purpose;
+                    document.getElementById('edit-receiptStatus').value = data.receiptStatus;
+                    editModal.classList.remove('hidden');
+                }
+            });
+            
+            // --- Edit Modal Logic ---
+            editModalCloseBtn.addEventListener('click', () => {
+                editModal.classList.add('hidden');
+            });
+    
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('edit-doc-id').value;
+                const updatedData = {
+                    donorType: document.getElementById('edit-donorType').value,
+                    idNumber: document.getElementById('edit-idNumber').value,
+                    orgName: document.getElementById('edit-orgName').value,
+                    phone: document.getElementById('edit-phone').value,
+                    notes: document.getElementById('edit-notes').value,
+                    amount: Number(document.getElementById('edit-amount').value),
+                    donationType: document.getElementById('edit-donationType').value,
+                    purpose: document.getElementById('edit-purpose').value,
+                    receiptStatus: document.getElementById('edit-receiptStatus').value
+                };
+                
+                try {
+                    await db.collection("recorded_donations").doc(id).update(updatedData);
+                    editModal.classList.add('hidden');
+                    Swal.fire({
+                        title: 'สำเร็จ!', text: 'อัปเดตข้อมูลเรียบร้อยแล้ว', icon: 'success',
+                        timer: 1500, showConfirmButton: false
+                    });
+                } catch (err) {
+                     Swal.fire({ title: 'ผิดพลาด!', text: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล', icon: 'error' });
+                    console.error(err);
+                }
+            });
+    
+            function renderStatusBadge(status) {
+                if (status === 'เสร็จสิ้น') return `<span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">เสร็จสิ้น</span>`;
+                if (status === 'รอดำเนินการ') return `<span class="bg-orange-100 text-orange-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">รอดำเนินการ</span>`;
+                return `<span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">ไม่ต้องการ</span>`;
+            }
+            
+            // --- Form Logic ---
+            const receiptRadios = document.querySelectorAll('input[name="receipt-request"]');
+            const statusDisplay = document.getElementById('status-display');
+            receiptRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'yes') {
+                        statusDisplay.textContent = 'รอดำเนินการ';
+                        statusDisplay.className = 'ml-2 font-bold text-lg text-yellow-800';
+                    } else {
+                        statusDisplay.textContent = 'เสร็จสิ้น';
+                        statusDisplay.className = 'ml-2 font-bold text-lg text-green-700';
                     }
                 });
+            });
+    
+            const consentRevenue = document.getElementById('consent-revenue');
+            const consentTruth = document.getElementById('consent-truth');
+            const submitReceiptButton = document.getElementById('submit-receipt-request');
+    
+            function checkConsent() {
+                submitReceiptButton.disabled = !(consentRevenue.checked && consentTruth.checked);
             }
             
-            if (target.classList.contains('edit-btn')) {
-                const data = allDocsData[id];
-                document.getElementById('edit-doc-id').value = id;
-                document.getElementById('edit-donorType').value = data.donorType;
-                document.getElementById('edit-idNumber').value = data.idNumber;
-                document.getElementById('edit-orgName').value = data.orgName;
-                document.getElementById('edit-phone').value = data.phone;
-                document.getElementById('edit-notes').value = data.notes;
-                document.getElementById('edit-amount').value = data.amount;
-                document.getElementById('edit-donationType').value = data.donationType;
-                document.getElementById('edit-purpose').value = data.purpose;
-                document.getElementById('edit-receiptStatus').value = data.receiptStatus;
-                editModal.classList.remove('hidden');
+            if (consentRevenue && consentTruth) {
+                checkConsent();
+                consentRevenue.addEventListener('change', checkConsent);
+                consentTruth.addEventListener('change', checkConsent);
             }
-        });
-        
-        // --- Edit Modal Logic ---
-        editModalCloseBtn.addEventListener('click', () => {
-            editModal.classList.add('hidden');
-        });
-
-        editForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('edit-doc-id').value;
-            const updatedData = {
-                donorType: document.getElementById('edit-donorType').value,
-                idNumber: document.getElementById('edit-idNumber').value,
-                orgName: document.getElementById('edit-orgName').value,
-                phone: document.getElementById('edit-phone').value,
-                notes: document.getElementById('edit-notes').value,
-                amount: Number(document.getElementById('edit-amount').value),
-                donationType: document.getElementById('edit-donationType').value,
-                purpose: document.getElementById('edit-purpose').value,
-                receiptStatus: document.getElementById('edit-receiptStatus').value
-            };
-            
-            try {
-                await updateDoc(doc(db, "recorded_donations", id), updatedData);
-                editModal.classList.add('hidden');
-                Swal.fire({
-                    title: 'สำเร็จ!', text: 'อัปเดตข้อมูลเรียบร้อยแล้ว', icon: 'success',
-                    timer: 1500, showConfirmButton: false
+    
+            // --- Dashboard Sub-Tab Navigation Logic ---
+            const dashboardTabs = document.querySelectorAll('.dashboard-nav-link');
+            const dashboardContents = document.querySelectorAll('.dashboard-sub-content');
+    
+            dashboardTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    dashboardTabs.forEach(item => item.classList.remove('active'));
+                    dashboardContents.forEach(content => content.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`dashboard-${tab.dataset.subtab}`)?.classList.add('active');
                 });
-            } catch (err) {
-                 Swal.fire({ title: 'ผิดพลาด!', text: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล', icon: 'error' });
-                console.error(err);
-            }
-        });
-
-        function renderStatusBadge(status) {
-            if (status === 'เสร็จสิ้น') return `<span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">เสร็จสิ้น</span>`;
-            if (status === 'รอดำเนินการ') return `<span class="bg-orange-100 text-orange-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">รอดำเนินการ</span>`;
-            return `<span class="bg-gray-100 text-gray-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">ไม่ต้องการ</span>`;
-        }
-        
-        // --- Form Logic ---
-        const receiptRadios = document.querySelectorAll('input[name="receipt-request"]');
-        const statusDisplay = document.getElementById('status-display');
-        receiptRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (this.value === 'yes') {
-                    statusDisplay.textContent = 'รอดำเนินการ';
-                    statusDisplay.className = 'ml-2 font-bold text-lg text-yellow-800';
-                } else {
-                    statusDisplay.textContent = 'เสร็จสิ้น';
-                    statusDisplay.className = 'ml-2 font-bold text-lg text-green-700';
-                }
             });
-        });
-
-        const consentRevenue = document.getElementById('consent-revenue');
-        const consentTruth = document.getElementById('consent-truth');
-        const submitReceiptButton = document.getElementById('submit-receipt-request');
-
-        function checkConsent() {
-            submitReceiptButton.disabled = !(consentRevenue.checked && consentTruth.checked);
-        }
-        
-        if (consentRevenue && consentTruth) {
-            checkConsent();
-            consentRevenue.addEventListener('change', checkConsent);
-            consentTruth.addEventListener('change', checkConsent);
-        }
-
-        // --- Dashboard Sub-Tab Navigation Logic ---
-        const dashboardTabs = document.querySelectorAll('.dashboard-nav-link');
-        const dashboardContents = document.querySelectorAll('.dashboard-sub-content');
-
-        dashboardTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                dashboardTabs.forEach(item => item.classList.remove('active'));
-                dashboardContents.forEach(content => content.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(`dashboard-${tab.dataset.subtab}`)?.classList.add('active');
-            });
-        });
-
-        // --- Print Logic ---
-        document.querySelectorAll('.print-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const tableId = button.dataset.tableId;
-                const title = button.dataset.title;
-                const startDateEl = document.getElementById(`start-date-${tableId.split('-')[2]}`);
-                const endDateEl = document.getElementById(`end-date-${tableId.split('-')[2]}`);
-                const startDateVal = startDateEl ? startDateEl.value : null;
-                const endDateVal = endDateEl ? endDateEl.value : null;
-
-                let dataToPrint;
-                if (tableId.includes('recorded')) dataToPrint = allRecordedData;
-                else if (tableId.includes('online')) dataToPrint = allOnlineData;
-                else if (tableId.includes('requests')) dataToPrint = allRequestData;
-                
-                const filteredData = filterDataByDate(dataToPrint, startDateVal ? new Date(startDateVal) : null, endDateVal ? new Date(endDateVal) : null);
-
-                let tableHeadHTML = '';
-                let tableBodyHTML = '';
-                let totalAmount = 0;
-
-                // Generate table based on ID
-                if (tableId.includes('recorded')) {
-                    tableHeadHTML = `<tr><th>วันที่บันทึก</th><th>ชื่อ/องค์กร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
-                    filteredData.forEach(item => {
-                        totalAmount += item.amount || 0;
-                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.orgName}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
-                    });
-                    tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="4" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
-                } else if (tableId.includes('online')) {
-                    tableHeadHTML = `<tr><th>วันที่</th><th>ชื่อ-นามสกุล</th><th>จำนวนเงิน</th><th>ประเภท</th><th>หมายเหตุ</th></tr>`;
-                    filteredData.forEach(item => {
-                        totalAmount += item.amount || 0;
-                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.name}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.type}</td><td>${item.notes || ''}</td></tr>`;
-                    });
-                    tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
-                } else if (tableId.includes('requests')) {
-                    tableHeadHTML = `<tr><th>วันที่ยื่นขอ</th><th>เลขประจำตัวผู้เสียภาษี</th><th>ชื่อ-สกุล</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
-                     filteredData.forEach(item => {
-                        totalAmount += item.amount || 0;
-                        tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.taxId}</td><td>${item.fullName}</td><td>${item.phone}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
-                    });
-                     tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="4" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
-                }
-
-
-                const printWindow = window.open('', '', 'height=600,width=800');
-                printWindow.document.write('<html><head><title>พิมพ์รายงาน</title>');
-                printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
-                 printWindow.document.write(`<style> body { font-family: 'Sarabun', sans-serif; } table { width: 100%; border-collapse: collapse; font-size: 12px; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left;} th { background-color: #f2f2f2; } </style>`);
-                printWindow.document.write('</head><body >');
-                printWindow.document.write('<div class="container mx-auto p-8">');
-                printWindow.document.write('<div class="text-center mb-8">');
-                printWindow.document.write('<img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="logo" class="h-24 w-24 mx-auto">');
-                printWindow.document.write(`<h1 class="text-2xl font-bold mt-4">${title}</h1>`);
-                printWindow.document.write(`<p>วัดไชยามาตย์</p>`);
-                 if(startDateVal || endDateVal) {
-                    printWindow.document.write(`<p>ช่วงวันที่: ${startDateVal || '...'} ถึง ${endDateVal || '...'}</p>`);
-                 }
-                printWindow.document.write(`<p>วันที่พิมพ์: ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric'})}</p>`);
-                printWindow.document.write('</div>');
-                printWindow.document.write('<table>');
-                printWindow.document.write(`<thead>${tableHeadHTML}</thead>`);
-                printWindow.document.write(`<tbody>${tableBodyHTML}</tbody>`);
-                printWindow.document.write('</table>');
-                printWindow.document.write('</div>');
-                printWindow.document.write('</body></html>');
-                printWindow.document.close();
-                
-                setTimeout(() => {
-                    printWindow.print();
-                    printWindow.close();
-                }, 500);
-            });
-        });
-
-        // --- Announcer Logic ---
-        const nextBtn = document.getElementById('next-btn');
-        const prevBtn = document.getElementById('prev-btn');
-
-        async function handleNextAnnouncement() {
-            const unannounced = allAnnouncerData.filter(d => !d.announced);
-            if (unannounced.length > 0) {
-                const docToUpdate = unannounced[0];
-                try {
-                    await updateDoc(doc(db, docToUpdate.collection, docToUpdate.id), { announced: true });
-                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true });
-                    Toast.fire({ icon: 'success', title: 'บันทึกการประกาศแล้ว' });
-                } catch (err) {
-                    console.error("Error updating announcement status:", err);
-                    Swal.fire('ผิดพลาด!', 'ไม่สามารถบันทึกสถานะการประกาศได้', 'error');
-                }
-            }
-        }
-
-        async function handlePreviousAnnouncement() {
-            const announced = allAnnouncerData.filter(d => d.announced);
-            if (announced.length > 0) {
-                const lastAnnouncedItem = announced.slice().sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)[0];
-                const docId = lastAnnouncedItem.id;
-                const collectionName = lastAnnouncedItem.collection;
-                try {
-                    await updateDoc(doc(db, collectionName, docId), { announced: false });
-                    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true });
-                    Toast.fire({ icon: 'info', title: 'ย้อนกลับรายการล่าสุดแล้ว' });
-                } catch (err) {
-                    console.error("Error reverting announcement status:", err);
-                    Swal.fire('ผิดพลาด!', 'ไม่สามารถย้อนกลับสถานะการประกาศได้', 'error');
-                }
-            }
-        }
-
-        nextBtn.addEventListener('click', handleNextAnnouncement);
-        prevBtn.addEventListener('click', handlePreviousAnnouncement);
-        
-        document.addEventListener('keydown', async (e) => {
-            const announcerTab = document.getElementById('announcer');
-            if (!announcerTab.classList.contains('active') || !auth.currentUser) return;
     
-            if (e.key === 'PageDown' || e.key.toLowerCase() === 'e') {
-                e.preventDefault();
-                handleNextAnnouncement();
+            // --- Print Logic ---
+            document.querySelectorAll('.print-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tableId = button.dataset.tableId;
+                    const title = button.dataset.title;
+                    const startDateEl = document.getElementById(`start-date-${tableId.split('-')[2]}`);
+                    const endDateEl = document.getElementById(`end-date-${tableId.split('-')[2]}`);
+                    const startDateVal = startDateEl ? startDateEl.value : null;
+                    const endDateVal = endDateEl ? endDateEl.value : null;
+    
+                    let dataToPrint;
+                    if (tableId.includes('recorded')) dataToPrint = allRecordedData;
+                    else if (tableId.includes('online')) dataToPrint = allOnlineData;
+                    else if (tableId.includes('requests')) dataToPrint = allRequestData;
+                    
+                    const filteredData = filterDataByDate(dataToPrint, startDateVal ? new Date(startDateVal) : null, endDateVal ? new Date(endDateVal) : null);
+    
+                    let tableHeadHTML = '';
+                    let tableBodyHTML = '';
+                    let totalAmount = 0;
+    
+                    // Generate table based on ID
+                    if (tableId.includes('recorded')) {
+                        tableHeadHTML = `<tr><th>วันที่บันทึก</th><th>ประเภทผู้บริจาค</th><th>เลขประจำตัว</th><th>ชื่อ/องค์กร</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>วัตถุประสงค์</th><th>สถานะใบเสร็จ</th><th>หมายเหตุ</th></tr>`;
+                        filteredData.forEach(item => {
+                            totalAmount += item.amount || 0;
+                            tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.donorType || ''}</td><td>${item.idNumber || ''}</td><td>${item.orgName}</td><td>${item.phone || ''}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.purpose}</td><td>${item.receiptStatus}</td><td>${item.notes || ''}</td></tr>`;
+                        });
+                        tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="5" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="4" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                    } else if (tableId.includes('online')) {
+                        tableHeadHTML = `<tr><th>วันที่</th><th>ชื่อ-นามสกุล</th><th>จำนวนเงิน</th><th>ประเภท</th><th>หมายเหตุ</th></tr>`;
+                        filteredData.forEach(item => {
+                            totalAmount += item.amount || 0;
+                            tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.name}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.type}</td><td>${item.notes || ''}</td></tr>`;
+                        });
+                        tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                    } else if (tableId.includes('requests')) {
+                        tableHeadHTML = `<tr><th>วันที่ยื่นขอ</th><th>เลขประจำตัวผู้เสียภาษี</th><th>ชื่อ-สกุล</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
+                         filteredData.forEach(item => {
+                            totalAmount += item.amount || 0;
+                            tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.taxId}</td><td>${item.fullName}</td><td>${item.phone}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
+                        });
+                         tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="4" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="2" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                    }
+    
+    
+                    const printWindow = window.open('', '', 'height=600,width=800');
+                    printWindow.document.write('<html><head><title>พิมพ์รายงาน</title>');
+                    printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+                     printWindow.document.write(`<style> body { font-family: 'Sarabun', sans-serif; } table { width: 100%; border-collapse: collapse; font-size: 12px; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left;} th { background-color: #f2f2f2; } </style>`);
+                    printWindow.document.write('</head><body >');
+                    printWindow.document.write('<div class="container mx-auto p-8">');
+                    printWindow.document.write('<div class="text-center mb-8">');
+                    printWindow.document.write('<img src="https://img2.pic.in.th/pic/-Ver.3-1.png" alt="logo" class="h-24 w-24 mx-auto">');
+                    printWindow.document.write(`<h1 class="text-2xl font-bold mt-4">${title}</h1>`);
+                    printWindow.document.write(`<p>วัดไชยามาตย์</p>`);
+                     if(startDateVal || endDateVal) {
+                        printWindow.document.write(`<p>ช่วงวันที่: ${startDateVal || '...'} ถึง ${endDateVal || '...'}</p>`);
+                     }
+                    printWindow.document.write(`<p>วันที่พิมพ์: ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric'})}</p>`);
+                    printWindow.document.write('</div>');
+                    printWindow.document.write('<table>');
+                    printWindow.document.write(`<thead>${tableHeadHTML}</thead>`);
+                    printWindow.document.write(`<tbody>${tableBodyHTML}</tbody>`);
+                    printWindow.document.write('</table>');
+                    printWindow.document.write('</div>');
+                    printWindow.document.write('</body></html>');
+                    printWindow.document.close();
+                    
+                    setTimeout(() => {
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                });
+            });
+    
+            // --- Announcer Logic ---
+            const nextBtn = document.getElementById('next-btn');
+            const prevBtn = document.getElementById('prev-btn');
+    
+            async function handleNextAnnouncement() {
+                const unannounced = allAnnouncerData.filter(d => !d.announced);
+                if (unannounced.length > 0) {
+                    const docToUpdate = unannounced[0];
+                    try {
+                        await db.collection(docToUpdate.collection).doc(docToUpdate.id).update({ announced: true });
+                        const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true });
+                        Toast.fire({ icon: 'success', title: 'บันทึกการประกาศแล้ว' });
+                    } catch (err) {
+                        console.error("Error updating announcement status:", err);
+                        Swal.fire('ผิดพลาด!', 'ไม่สามารถบันทึกสถานะการประกาศได้', 'error');
+                    }
+                }
             }
     
-            if (e.key.toLowerCase() === 'w') {
-                e.preventDefault();
-                handlePreviousAnnouncement();
-            }
-        });
-
-        // --- Mobile Menu Logic ---
-        const menuBtn = document.getElementById('menu-btn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        menuBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
-            sidebar.classList.toggle('translate-x-0');
-            overlay.classList.toggle('hidden');
-        });
-
-        overlay.addEventListener('click', () => {
-            sidebar.classList.add('-translate-x-full');
-            sidebar.classList.remove('translate-x-0');
-            overlay.classList.add('hidden');
-        });
-
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth < 768) { // md breakpoint
-                    sidebar.classList.add('-translate-x-full');
-                    sidebar.classList.remove('translate-x-0');
-                    overlay.classList.add('hidden');
+            async function handlePreviousAnnouncement() {
+                const announced = allAnnouncerData.filter(d => d.announced);
+                if (announced.length > 0) {
+                    const lastAnnouncedItem = announced.slice().sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)[0];
+                    const docId = lastAnnouncedItem.id;
+                    const collectionName = lastAnnouncedItem.collection;
+                    try {
+                        await db.collection(collectionName).doc(docId).update({ announced: false });
+                        const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true });
+                        Toast.fire({ icon: 'info', title: 'ย้อนกลับรายการล่าสุดแล้ว' });
+                    } catch (err) {
+                        console.error("Error reverting announcement status:", err);
+                        Swal.fire('ผิดพลาด!', 'ไม่สามารถย้อนกลับสถานะการประกาศได้', 'error');
+                    }
                 }
+            }
+    
+            nextBtn.addEventListener('click', handleNextAnnouncement);
+            prevBtn.addEventListener('click', handlePreviousAnnouncement);
+            
+            document.addEventListener('keydown', async (e) => {
+                const announcerTab = document.getElementById('announcer');
+                if (!announcerTab.classList.contains('active') || !auth.currentUser) return;
+        
+                if (e.key === 'PageDown' || e.key.toLowerCase() === 'e') {
+                    e.preventDefault();
+                    handleNextAnnouncement();
+                }
+        
+                if (e.key.toLowerCase() === 'w') {
+                    e.preventDefault();
+                    handlePreviousAnnouncement();
+                }
+            });
+    
+            // --- Mobile Menu Logic ---
+            const menuBtn = document.getElementById('menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+    
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebar.classList.toggle('translate-x-0');
+                overlay.classList.toggle('hidden');
+            });
+    
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+            });
+    
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) { // md breakpoint
+                        sidebar.classList.add('-translate-x-full');
+                        sidebar.classList.remove('translate-x-0');
+                        overlay.classList.add('hidden');
+                    }
+                });
             });
         });
     </script>
