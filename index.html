@@ -464,7 +464,6 @@
                         <!-- Dashboard Sub-content -->
                         <div class="mt-8">
                             <div id="dashboard-recorded" class="dashboard-sub-content active">
-                                <!-- ❇️ MODIFIED: Added search input here ❇️ -->
                                 <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                                     <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลที่เจ้าหน้าที่บันทึก</h3>
                                     <div class="flex flex-wrap items-center justify-end space-x-2 gap-y-2 w-full md:w-auto">
@@ -479,24 +478,26 @@
                                 </div>
                                 <div class="overflow-x-auto border rounded-lg">
                                     <table class="min-w-full">
+                                        <!-- ❇️ MODIFIED: Table Head updated ❇️ -->
                                         <thead class="table-header">
                                             <tr>
+                                                <th class="py-3 px-4 text-left font-semibold table-header-text">วันที่บริจาค</th>
                                                 <th class="py-3 px-4 text-left font-semibold table-header-text">ชื่อ-นามสกุล</th>
                                                 <th class="py-3 px-4 text-left font-semibold table-header-text">จำนวนเงิน (บาท)</th>
-                                                <th class="py-3 px-4 text-left font-semibold table-header-text">ประเภท</th>
-                                                <th class="py-3 px-4 text-left font-semibold table-header-text">วัตถุประสงค์</th>
+                                                <th class="py-3 px-4 text-left font-semibold table-header-text">ประเภทบริจาค</th>
+                                                <th class="py-3 px-4 text-left font-semibold table-header-text">หมายเหตุ</th>
                                                 <th class="py-3 px-4 text-left font-semibold table-header-text">สถานะใบลดหย่อน</th>
                                                 <th class="py-3 px-4 text-left font-semibold table-header-text">ดำเนินการ</th>
                                             </tr>
                                         </thead>
                                         <tbody id="dashboard-table-recorded-body" class="divide-y divide-gray-200 bg-white">
-                                            <tr><td colspan="6" class="text-center p-8 text-gray-500">กำลังโหลดข้อมูล...</td></tr>
+                                            <!-- ❇️ MODIFIED: Colspan updated to 7 ❇️ -->
+                                            <tr><td colspan="7" class="text-center p-8 text-gray-500">กำลังโหลดข้อมูล...</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div id="dashboard-online" class="dashboard-sub-content">
-                                <!-- ❇️ MODIFIED: Added search input here ❇️ -->
                                 <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                                     <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลบริจาคออนไลน์</h3>
                                     <div class="flex flex-wrap items-center justify-end space-x-2 gap-y-2 w-full md:w-auto">
@@ -528,7 +529,6 @@
                                 </div>
                             </div>
                             <div id="dashboard-requests" class="dashboard-sub-content">
-                                <!-- ❇️ MODIFIED: Added search input here ❇️ -->
                                 <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                                     <h3 class="text-xl font-semibold text-gray-700">ตารางข้อมูลคำขอใบลดหย่อนภาษี</h3>
                                     <div class="flex flex-wrap items-center justify-end space-x-2 gap-y-2 w-full md:w-auto">
@@ -1121,16 +1121,13 @@
                 flatpickr("#start-date-requests", fpConfig);
                 flatpickr("#end-date-requests", fpConfig);
                 
-                // Added Event Listeners for Search Boxes
                 const searchRecorded = document.getElementById('search-recorded');
                 const searchOnline = document.getElementById('search-online');
                 const searchRequests = document.getElementById('search-requests');
 
-                // Use 'input' event for real-time filtering
                 if (searchRecorded) searchRecorded.addEventListener('input', datePickerOnChange);
                 if (searchOnline) searchOnline.addEventListener('input', datePickerOnChange);
                 if (searchRequests) searchRequests.addEventListener('input', datePickerOnChange);
-                
 
                 const mergeAndRender = () => {
                     const combined = [...allRecordedData, ...allOnlineData];
@@ -1241,7 +1238,7 @@
                 }
             }
     
-            // Function updated to include search filtering
+            // ❇️ MODIFIED: Updated search logic and table row generation ❇️
             function renderRecordedTable() {
                 const startDate = document.getElementById('start-date-recorded')._flatpickr.selectedDates[0];
                 const endDate = document.getElementById('end-date-recorded')._flatpickr.selectedDates[0];
@@ -1254,29 +1251,29 @@
                             (data.orgName && data.orgName.toLowerCase().includes(searchTerm)) ||
                             (data.amount && data.amount.toString().toLowerCase().includes(searchTerm)) ||
                             (data.donationType && data.donationType.toLowerCase().includes(searchTerm)) ||
-                            (data.purpose && data.purpose.toLowerCase().includes(searchTerm)) ||
+                            (data.notes && data.notes.toLowerCase().includes(searchTerm)) || // Added notes
                             (data.receiptStatus && data.receiptStatus.toLowerCase().includes(searchTerm)) ||
                             (data.phone && data.phone.toLowerCase().includes(searchTerm)) ||
-                            (data.idNumber && data.idNumber.toLowerCase().includes(searchTerm))
+                            (data.idNumber && data.idNumber.toLowerCase().includes(searchTerm)) ||
+                            (formatFirebaseTimestamp(data.createdAt).toLowerCase().includes(searchTerm)) // Added date
                         );
                     });
                 }
 
                 const tableBody = document.getElementById('dashboard-table-recorded-body');
-                
                 tableBody.innerHTML = '';
-                let totalAmount = 0, pendingReceipts = 0;
     
                 if (filteredData.length === 0) {
-                     tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก หรือไม่ตรงกับคำค้นหา</td></tr>';
+                     tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-8 text-gray-500">ไม่พบข้อมูลในช่วงเวลาที่เลือก หรือไม่ตรงกับคำค้นหา</td></tr>';
                 } else {
                     filteredData.forEach(data => {
                         tableBody.innerHTML += `
                             <tr class="hover-row" data-id="${data.id}">
+                                <td class="py-3 px-4">${formatFirebaseTimestamp(data.createdAt)}</td>
                                 <td class="py-3 px-4">${data.orgName}</td>
                                 <td class="py-3 px-4 text-right">${(data.amount || 0).toLocaleString('th-TH')}</td>
                                 <td class="py-3 px-4">${data.donationType}</td>
-                                <td class="py-3 px-4">${data.purpose}</td>
+                                <td class="py-3 px-4">${data.notes || ''}</td>
                                 <td class="py-3 px-4">${renderStatusBadge(data.receiptStatus)}</td>
                                 <td class="py-3 px-4 text-center space-x-4">
                                     <button class="text-indigo-600 hover:text-indigo-800 edit-btn" data-collection="recorded_donations" title="แก้ไข"><i class="fas fa-edit"></i></button>
@@ -1294,7 +1291,6 @@
                 document.getElementById('pending-receipts').textContent = `${allRecordedData.filter(d => d.receiptStatus === 'รอดำเนินการ').length} รายการ`;
             }
     
-            // Function updated to include search filtering
             function renderOnlineTable() {
                 const startDate = document.getElementById('start-date-online')._flatpickr.selectedDates[0];
                 const endDate = document.getElementById('end-date-online')._flatpickr.selectedDates[0];
@@ -1336,7 +1332,6 @@
                 }
             }
     
-            // Function updated to include search filtering
             function renderRequestsTable() {
                 const startDate = document.getElementById('start-date-requests')._flatpickr.selectedDates[0];
                 const endDate = document.getElementById('end-date-requests')._flatpickr.selectedDates[0];
@@ -1641,8 +1636,7 @@
                 });
             });
     
-            // --- Print Logic ---
-            // ❇️ MODIFIED: Updated Print Logic to include search term ❇️
+            // ❇️ MODIFIED: Print logic updated to use search filters ❇️
             document.querySelectorAll('.print-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const tableId = button.dataset.tableId;
@@ -1663,12 +1657,12 @@
                     if (tableType === 'recorded') dataToPrint = allRecordedData;
                     else if (tableType === 'online') dataToPrint = allOnlineData;
                     else if (tableType === 'requests') dataToPrint = allRequestData;
-                    else return; // Should not happen
+                    else return;
                     
                     // 1. Filter by date first
                     let filteredData = filterDataByDate(dataToPrint, startDateVal ? new Date(startDateVal) : null, endDateVal ? new Date(endDateVal) : null);
 
-                    // 2. Then filter by search term (apply specific filter logic for each table type)
+                    // 2. Then filter by search term
                     if (searchTerm) {
                         if (tableType === 'recorded') {
                              filteredData = filteredData.filter(data => {
@@ -1676,10 +1670,11 @@
                                     (data.orgName && data.orgName.toLowerCase().includes(searchTerm)) ||
                                     (data.amount && data.amount.toString().toLowerCase().includes(searchTerm)) ||
                                     (data.donationType && data.donationType.toLowerCase().includes(searchTerm)) ||
-                                    (data.purpose && data.purpose.toLowerCase().includes(searchTerm)) ||
+                                    (data.notes && data.notes.toLowerCase().includes(searchTerm)) ||
                                     (data.receiptStatus && data.receiptStatus.toLowerCase().includes(searchTerm)) ||
                                     (data.phone && data.phone.toLowerCase().includes(searchTerm)) ||
-                                    (data.idNumber && data.idNumber.toLowerCase().includes(searchTerm))
+                                    (data.idNumber && data.idNumber.toLowerCase().includes(searchTerm)) ||
+                                    (formatFirebaseTimestamp(data.createdAt).toLowerCase().includes(searchTerm))
                                 );
                             });
                         } else if (tableType === 'online') {
@@ -1705,19 +1700,19 @@
                             });
                         }
                     }
-    
+
                     let tableHeadHTML = '';
                     let tableBodyHTML = '';
                     let totalAmount = 0;
     
                     // Generate table based on ID and filtered data
                     if (tableType === 'recorded') {
-                        tableHeadHTML = `<tr><th>วันที่บันทึก</th><th>ชื่อ/องค์กร</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th></tr>`;
+                        tableHeadHTML = `<tr><th>วันที่บริจาค</th><th>ชื่อ-นามสกุล</th><th>จำนวนเงิน</th><th>ประเภทบริจาค</th><th>หมายเหตุ</th><th>สถานะใบลดหย่อน</th></tr>`;
                         filteredData.forEach(item => {
                             totalAmount += item.amount || 0;
-                            tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.orgName}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td></tr>`;
+                            tableBodyHTML += `<tr><td>${formatFirebaseTimestamp(item.createdAt)}</td><td>${item.orgName}</td><td style="text-align: right;">${(item.amount || 0).toLocaleString('th-TH')}</td><td>${item.donationType}</td><td>${item.notes || ''}</td><td>${item.receiptStatus}</td></tr>`;
                         });
-                        tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="4" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
+                        tableBodyHTML += `<tr style="font-weight: bold; background-color: #f3f4f6;"><td colspan="2" style="text-align: right;">รวมทั้งสิ้น</td><td style="text-align: right;">${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td colspan="3" style="text-align: center;">(${ThaiBaht(totalAmount)})</td></tr>`;
                     } else if (tableType === 'online') {
                         tableHeadHTML = `<tr><th>วันที่</th><th>ชื่อ-นามสกุล</th><th>จำนวนเงิน</th><th>ประเภท</th><th>หมายเหตุ</th></tr>`;
                         filteredData.forEach(item => {
@@ -1748,14 +1743,12 @@
                      if(startDateVal || endDateVal) {
                          printWindow.document.write(`<p>ช่วงวันที่: ${startDateVal || '...'} ถึง ${endDateVal || '...'}</p>`);
                      }
-                    // Add search term info if present
-                    if (searchTerm) {
+                     if (searchTerm) {
                          printWindow.document.write(`<p>คำค้นหา: "${searchEl.value}"</p>`);
                     }
                     printWindow.document.write(`<p>วันที่พิมพ์: ${new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric'})}</p>`);
                     printWindow.document.write('</div>');
                     
-                    // Add table only if there is data
                     if (filteredData.length > 0) {
                         printWindow.document.write('<table>');
                         printWindow.document.write(`<thead>${tableHeadHTML}</thead>`);
@@ -1764,7 +1757,7 @@
                     } else {
                         printWindow.document.write('<p class="text-center text-gray-500 mt-8">-- ไม่พบข้อมูลตามเงื่อนไขที่ระบุ --</p>');
                     }
-
+                    
                     printWindow.document.write('</div>');
                     printWindow.document.write('</body></html>');
                     printWindow.document.close();
@@ -1775,7 +1768,6 @@
                     }, 500);
                 });
             });
-            // ❇️ End of modification ❇️
     
             // --- Announcer Logic ---
             const nextBtn = document.getElementById('next-btn');
